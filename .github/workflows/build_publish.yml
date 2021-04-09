@@ -1,0 +1,59 @@
+name: Build/Publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: "Build bundle.js"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "3.1.x"
+      - run: sed -i -e "s#{{TAG}}#$(echo ${GITHUB_SHA})#g" src/App.fs
+      - run: npm install
+      - run: npm run prod
+      - uses: actions/upload-artifact@v1
+        with:
+          name: bundlejs
+          path: public/bundle.js
+  build_push_docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v1
+      - name: Login to dockerhub
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u torbencarstens --password-stdin
+      - name: Get the version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_SHA})
+      - uses: actions/download-artifact@v1
+        with:
+          name: bundlejs
+      - name: Move artifact into public
+        run: mv bundlejs/bundle.js public/bundle.js
+      - name: Build the tagged Docker image
+        run: docker build -t torbencarstens/neverhaveiever:${{steps.vars.outputs.tag}} .
+      - name: Push the tagged Docker image
+        run: docker push torbencarstens/neverhaveiever:${{steps.vars.outputs.tag}}
+  deploy:
+    name: "Publish to k8s"
+    runs-on: ubuntu-latest
+    needs: build_push_docker
+    steps:
+      - uses: actions/checkout@v1
+      - name: Get the version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_SHA})
+      - name: update tag in manifest.yml
+        run: sed -i -e "s#{{TAG}}#:$(echo ${{steps.vars.outputs.tag}})#g" .kubernetes/manifest.yaml
+      - uses: danielr1996/kubectl-action@1.0.0
+        name: apply config
+        with:
+          kubeconfig: ${{ secrets.K8SCONF }}
+          args: apply -f .kubernetes/manifest.yaml
+
