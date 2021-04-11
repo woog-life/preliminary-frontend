@@ -1,6 +1,5 @@
 module App
 
-open System
 open Elmish
 open Elmish.React
 open Fable.React
@@ -22,7 +21,7 @@ let getLake uuid model dispatch =
         let url =
             sprintf "https://api.woog.life/lake/%s" uuid
 
-        let! res = Fetch.get (url)
+        let! res = Fetch.get url
         if (not model.LakeLoadInit) then
             AddLake res |> dispatch
     }
@@ -48,7 +47,7 @@ let update (msg: Msg) (model: Model) =
         else
             { model with LakeLoadInit = true; InitialLoad = false }, Cmd.ofSub (fun dispatch -> getLake UUID model dispatch |> Promise.start)
     | AddLake lake ->
-        if (model.Lake.IsSome) then
+        if model.Lake.IsSome then
             model, Cmd.Empty
         else
             { model with Lake = Some(Lake.Into lake); InitialLoad = false; LakeLoadInit = true }, Cmd.Empty
@@ -56,7 +55,7 @@ let update (msg: Msg) (model: Model) =
 let displayTemp model =
     str (
         match model.Lake with
-        | Some (lake) -> sprintf "%.1f°" lake.Temperature
+        | Some lake -> sprintf "%.1f°" lake.Temperature
         | None -> "0"
     )
 
@@ -69,7 +68,7 @@ let displayLake model =
             p [ Style [ FontSize "2em" ] ] [
                 str (
                     match model.Lake with
-                    | Some (lake) -> lake.Name
+                    | Some lake -> lake.Name
                     | None -> "Kein See verfügbar"
                 )
             ]
@@ -79,7 +78,7 @@ let displayLake model =
             p [ Style [ FontSize "2em" ] ] [
                 str (
                     match model.Lake with
-                    | Some (lake) -> (lake.Time.Split 'T') |> String.concat " "
+                    | Some lake -> (lake.Time.Split 'T') |> String.concat " "
                     | None -> ""
                 )
             ]
@@ -90,7 +89,7 @@ let displayLake model =
         ]
     ]
 
-let view (model: Model) dispatch =
+let view (model: Model) _ =
     div [ (*Ref
               (fun element ->
                   if not (isNull element) then
