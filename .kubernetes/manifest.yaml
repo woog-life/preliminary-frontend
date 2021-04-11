@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: torbencarstens/templakefrontend:{{tag}}
+        image: ghcr.io/woog-life/preliminary-frontend:{{TAG}}
         imagePullPolicy: Always
         ports:
         - containerPort: 80
