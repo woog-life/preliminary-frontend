@@ -1,5 +1,6 @@
 module App
 
+open System
 open Elmish
 open Elmish.React
 open Fable.React
