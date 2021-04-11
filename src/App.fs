@@ -1,6 +1,5 @@
 module App
 
-open System
 open Elmish
 open Elmish.React
 open Fable.React
@@ -79,7 +78,7 @@ let displayLake model =
             p [ Style [ FontSize "2em" ] ] [
                 str (
                     match model.Lake with
-                    | Some lake -> lake.Time.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("de-DE"))
+                    | Some lake -> lake.Time.ToString("HH:mm dd.MM.yyyy")
                     | None -> ""
                 )
             ]
