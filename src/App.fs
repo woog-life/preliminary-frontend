@@ -78,7 +78,7 @@ let displayLake model =
             p [ Style [ FontSize "2em" ] ] [
                 str (
                     match model.Lake with
-                    | Some lake -> (lake.Time.Split 'T') |> String.concat " "
+                    | Some lake -> lake.Time.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("de-DE"))
                     | None -> ""
                 )
             ]

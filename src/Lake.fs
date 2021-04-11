@@ -1,5 +1,7 @@
 module Lake
 
+open System
+
 type RawTypeData =
     { time: string
       temperature: int
@@ -14,7 +16,7 @@ type RawType =
 type Type =
     { Uuid: string
       Name: string
-      Time: string
+      Time: DateTime
       Temperature: double }
     override this.Equals(other) =
         match other with
@@ -29,5 +31,5 @@ let Into raw =
             Uuid = raw.id
             Name = raw.name
             Temperature = double (raw.data.preciseTemperature)
-            Time = raw.data.time
+            Time = DateTime.Parse(raw.data.time)
         }
