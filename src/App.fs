@@ -56,7 +56,7 @@ let update (msg: Msg) (model: Model) =
 let displayTemp model =
     str (
         match model.Lake with
-        | Some (lake) -> sprintf "%d°" lake.Temperature
+        | Some (lake) -> sprintf "%.2f°" lake.Temperature
         | None -> "0"
     )
 
