@@ -97,6 +97,7 @@ let view (model: Model) dispatch =
                       if model.InitialLoad && model.Lake.IsNone && not model.LakeLoadInit then
                           dispatch InitialLoad)*)
           ClassName "row d-flex justify-content-center" ] [
+        span [ ClassName "d-none" ] [ str "{{TAG}}" ]
         (displayLake model)
     ]
 
