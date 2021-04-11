@@ -35,14 +35,15 @@ jobs:
       - uses: actions/download-artifact@v1
         with:
           name: publicdir
+      - run: ls -R
       - name: Move artifacts into current dir
         run: mv publicdir/public .
       - run: ls public
       - run: ls publicdir
-      - name: Build the tagged Docker image
-        run: docker build -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
-      - name: Push the tagged Docker image
-        run: docker push ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA}
+#      - name: Build the tagged Docker image
+#        run: docker build -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
+#      - name: Push the tagged Docker image
+#        run: docker push ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA}
 #  deploy:
 #    name: "Publish to k8s"
 #    runs-on: ubuntu-latest
