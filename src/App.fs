@@ -149,13 +149,10 @@ let displayLake model =
     ]
 
 let view (model: Model) _ =
-    div [ (*Ref
-              (fun element ->
-                  if not (isNull element) then
-                      if model.InitialLoad && model.Lake.IsNone && not model.LakeLoadInit then
-                          dispatch InitialLoad)*)
-          ClassName "row d-flex justify-content-center" ] [
-        span [ ClassName "d-none" ] [ str "{{TAG}}" ]
+    div [ ClassName "row d-flex justify-content-center" ] [
+        span [ ClassName "d-none" ] [
+            str "{{TAG}}"
+        ]
         (displayLake model)
     ]
 
