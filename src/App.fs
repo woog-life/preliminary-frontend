@@ -36,7 +36,7 @@ let API_KEY = "{{API_KEY}}"
 let getWeather dispatch =
     promise {
         let url =
-            sprintf "https://api.openweathermap.org/data/2.5/weather?q=Darmstadt&appid=%s" API_KEY
+            sprintf "https://api.openweathermap.org/data/2.5/weather?q=Darmstadt&units=metric&appid=%s" API_KEY
 
         let! res = Fetch.get url
         UpdateWeather res |> dispatch
