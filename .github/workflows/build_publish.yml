@@ -15,7 +15,7 @@ jobs:
         with:
           dotnet-version: "3.1.x"
       - run: sed -i -e "s#{{TAG}}#$(echo ${GITHUB_SHA})#g" src/App.fs
-      - run: sed -i -e "s#{{API_KEY}}#${{ secrets.OPENWEATHERMAP_APIKEY }}#g" src/App.fs
+      - run: sed -i -e "s#{{API_KEY}}#${{ secrets.OPENWEATHERMAP_APIKEY_RAW }}#g" src/App.fs
       - run: npm install
       - run: npm run prod
       - uses: actions/upload-artifact@v2
