@@ -42,8 +42,6 @@ let getWeather dispatch =
         UpdateWeather res |> dispatch
     }
 
-let x = true
-
 let init () : Model * Cmd<Msg> =
     { InitialLoad = true
       Lake = None
