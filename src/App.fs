@@ -140,6 +140,7 @@ let displayLake model =
                 )
             ]
             p [ Id "temperature"
+                ClassName "ml-4"
                 Style [ FontSize "12em" ] ] [
                 displayTemp model
             ]
