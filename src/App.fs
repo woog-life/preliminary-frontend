@@ -47,8 +47,10 @@ let init () : Model * Cmd<Msg> =
       Lake = None
       LakeLoadInit = false
       Weather = None },
-    Cmd.ofSub (fun dispatch -> dispatch GetLake
-                               dispatch GetWeather)
+    Cmd.ofSub
+        (fun dispatch ->
+            dispatch GetLake
+            dispatch GetWeather)
 
 let UUID = "69c8438b-5aef-442f-a70d-e0d783ea2b38"
 
@@ -68,8 +70,10 @@ let update (msg: Msg) (model: Model) =
             if model.LakeLoadInit then
                 Cmd.Empty
             else
-                Cmd.ofSub (fun dispatch -> dispatch GetLake
-                                           dispatch GetWeather)
+                Cmd.ofSub
+                    (fun dispatch ->
+                        dispatch GetLake
+                        dispatch GetWeather)
     | GetLake ->
         if (model.Lake.IsSome || model.LakeLoadInit) then
             model, Cmd.Empty
@@ -78,8 +82,7 @@ let update (msg: Msg) (model: Model) =
                   LakeLoadInit = true
                   InitialLoad = false },
             Cmd.ofSub (fun dispatch -> getLake UUID model dispatch |> Promise.start)
-    | GetWeather ->
-        model, Cmd.ofSub (fun dispatch -> getWeather dispatch |> Promise.start)
+    | GetWeather -> model, Cmd.ofSub (fun dispatch -> getWeather dispatch |> Promise.start)
     | AddLake lake ->
         if model.Lake.IsSome then
             model, Cmd.Empty
@@ -90,7 +93,9 @@ let update (msg: Msg) (model: Model) =
                   LakeLoadInit = true },
             Cmd.Empty
     | UpdateWeather weather ->
-        { model with Weather = Some (Weather.Into weather) }, Cmd.Empty
+        { model with
+              Weather = Some(Weather.Into weather) },
+        Cmd.Empty
 
 let timeFormat = "HH:mm dd.MM.yyyy"
 let sunTimeFormat = "HH:mm"
@@ -98,12 +103,15 @@ let formatDateTime (time: DateTime) (format: string) = time.ToString(format)
 
 let displaySun (weather: Weather.Type) =
     div [ ClassName "mb-4"
-          Style [ FontSize "2em" ]
-    ] [
-        p [  ] [ str "Sonne" ]
-        str (formatDateTime weather.Sunrise.UtcDateTime sunTimeFormat)
+          Style [ FontSize "2em" ] ] [
+        p [ Id "sun-information-header" ] [ str "Sonne" ]
+        span [ Id "sunrise"; Title "sunrise" ] [
+            str (formatDateTime weather.Sunrise.UtcDateTime sunTimeFormat)
+        ]
         str " - "
-        str (formatDateTime weather.Sunset.UtcDateTime sunTimeFormat)
+        span [ Id "sunrise"; Title "sunset" ] [
+            str (formatDateTime weather.Sunset.UtcDateTime sunTimeFormat)
+        ]
     ]
 
 let displayTemp model =
@@ -114,12 +122,14 @@ let displayTemp model =
     )
 
 let displayLake model =
-    div [ ClassName "text-center h-75 text-white"
+    div [ Id "data"
+          ClassName "text-center h-75 text-white"
           Style [ MarginTop "10%"
                   Padding "10px"
                   FontFamily "Chawp" ] ] [
         div [] [
-            p [ Style [ FontSize "2em" ] ] [
+            p [ Id "lake-name"
+                Style [ FontSize "2em" ] ] [
                 str (
                     match model.Lake with
                     | Some lake -> lake.Name
@@ -129,17 +139,18 @@ let displayLake model =
             (match model.Weather with
              | Some weather -> displaySun weather
              | None -> span [] [])
-            p [ Style [ FontSize "2em" ] ] [
+            p [ Id "water-temperature-header"
+                Style [ FontSize "2em" ] ] [
                 str "Wasser (°C)"
             ]
-            p [ Style [ FontSize "2em" ] ] [
-                str (
-                    match model.Lake with
-                    | Some lake -> formatDateTime lake.Time timeFormat
-                    | None -> ""
-                )
-            ]
-            p [ Id "temperature"
+            (match model.Lake with
+             | Some lake ->
+                 p [ Id "data-updated-time"
+                     Style [ FontSize "2em" ] ] [
+                     str (formatDateTime lake.Time timeFormat)
+                 ]
+             | None -> span [] [])
+            p [ Id "lake-water-temperature"
                 ClassName "ml-4"
                 Style [ FontSize "12em" ] ] [
                 displayTemp model
@@ -149,7 +160,7 @@ let displayLake model =
 
 let view (model: Model) _ =
     div [ ClassName "row d-flex justify-content-center" ] [
-        span [ ClassName "d-none" ] [
+        span [ Id "commit-sha"; ClassName "d-none" ] [
             str "{{TAG}}"
         ]
         (displayLake model)
@@ -158,5 +169,5 @@ let view (model: Model) _ =
 // App
 Program.mkProgram init update view
 |> Program.withReactSynchronous "elmish-app"
-//|> Program.withConsoleTrace
+// |> Program.withConsoleTrace
 |> Program.run
