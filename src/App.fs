@@ -118,7 +118,7 @@ let displayTemp model =
     str (
         match model.Lake with
         | Some lake -> sprintf "%.1f°" lake.Temperature
-        | None -> "0"
+        | None -> "/"
     )
 
 let displayLake model =
