@@ -63,8 +63,8 @@ jobs:
     needs: [ build, build_push_docker, deploy ]
     if: failure()
     steps:
-      - uses: appleboy/telegram-action@master
       - name: send failure alert
+      - uses: appleboy/telegram-action@master
         with:
           format: markdown
           to: ${{ secrets.CI_FAILURE_TELEGRAM_TO }}
