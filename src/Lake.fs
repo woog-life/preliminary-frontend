@@ -17,7 +17,7 @@ type Type =
     { Uuid: string
       Name: string
       Time: DateTime
-      Temperature: double }
+      Temperature: string }
     override this.Equals(other) =
         match other with
         | :? Type as other ->
@@ -30,6 +30,6 @@ let Into raw =
         {
             Uuid = raw.id
             Name = raw.name
-            Temperature = double (raw.data.preciseTemperature)
+            Temperature = raw.data.preciseTemperature
             Time = DateTime.Parse(raw.data.time)
         }

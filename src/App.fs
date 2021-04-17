@@ -20,10 +20,12 @@ type Msg =
     | GetWeather
     | UpdateWeather of Weather.RawType
 
+let PRECISION = 1
+
 let getLake uuid model dispatch =
     promise {
         let url =
-            sprintf "https://api.woog.life/lake/%s" uuid
+            sprintf "https://api.woog.life/lake/%s?precision=%d" uuid PRECISION
 
         let! res = Fetch.get url
 
@@ -117,7 +119,7 @@ let displaySun (weather: Weather.Type) =
 let displayTemp model =
     str (
         match model.Lake with
-        | Some lake -> sprintf "%.1f°" lake.Temperature
+        | Some lake -> sprintf "%s°" lake.Temperature
         | None -> "/"
     )
 
