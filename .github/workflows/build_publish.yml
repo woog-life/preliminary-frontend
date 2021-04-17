@@ -63,11 +63,10 @@ jobs:
     needs: [ build, build_push_docker, deploy ]
     if: failure()
     steps:
+      - uses: appleboy/telegram-action@master
       - name: send failure alert
-      uses: appleboy/telegram-action@master
-      with:
-        format: markdown
-        to: ${{ secrets.CI_FAILURE_TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_CI_TOKEN_RAW }}
-        args: job failed in woog-life/preliminary-frontend after push ([CI](https://github.com/woog-life/preliminary-frontend/actions))
-
+        with:
+          format: markdown
+          to: ${{ secrets.CI_FAILURE_TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_CI_TOKEN_RAW }}
+          args: job failed in woog-life/preliminary-frontend after push ([CI](https://github.com/woog-life/preliminary-frontend/actions))
