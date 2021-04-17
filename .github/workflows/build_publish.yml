@@ -31,15 +31,15 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
-            registry: ghcr.io
-            username: ${{ github.repository_owner }}
-            password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/download-artifact@v1
         with:
           name: publicdir
       - run: |
-            rm -rf public
-            mv publicdir public
+          rm -rf public
+          mv publicdir public
       - name: Build the tagged Docker image
         run: docker build -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
       - name: Push the tagged Docker image
@@ -57,4 +57,17 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           args: apply -f .kubernetes/manifest.yaml
+  alert:
+    name: "alert on failure"
+    runs-on: ubuntu-latest
+    needs: [ build, build_push_docker, deploy ]
+    if: failure()
+    steps:
+      - name: send failure alert
+      uses: appleboy/telegram-action@master
+      with:
+        format: markdown
+        to: ${{ secrets.CI_FAILURE_TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_CI_TOKEN_RAW }}
+        args: job failed in woog-life/preliminary-frontend after push ([CI](https://github.com/woog-life/preliminary-frontend/actions))
 
