@@ -171,5 +171,5 @@ let view (model: Model) _ =
 // App
 Program.mkProgram init update view
 |> Program.withReactSynchronous "elmish-app"
-// |> Program.withConsoleTrace
+|> Program.withConsoleTrace
 |> Program.run
