@@ -183,13 +183,13 @@ let displayEventCollapseButton =
              Type "button"
              DataToggle "collapse"
              DataTarget "#events"
-             AriaExpanded false
+             AriaExpanded true
              AriaControls "events" ] [
         str "Verfügbare Buchungsslots"
     ]
 
 let displayEvents (events: Booking.Type list) =
-    div [ ClassName "collapse"; Id "events" ] [
+    div [ ClassName "collapse show"; Id "events" ] [
         table [ ClassName "table table-dark" ] [
             displayEventHeader
             tbody [] (List.map displayEvent events)
