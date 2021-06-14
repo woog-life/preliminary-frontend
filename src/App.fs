@@ -272,7 +272,8 @@ let displayLake model dispatch =
     ]
 
 let view (model: Model) dispatch =
-    div [ ClassName "row d-flex justify-content-center" ] [
+    div [ ClassName "row d-flex justify-content-center"
+          Style [ Width "99%" ] ] [
         span [ Id "commit-sha"; ClassName "d-none" ] [
             str "{{TAG}}"
         ]
