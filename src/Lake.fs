@@ -17,7 +17,8 @@ type Type =
     { Uuid: string
       Name: string
       Time: DateTime
-      Temperature: string }
+      Temperature: string
+      Events: Booking.Type list }
     override this.Equals(other) =
         match other with
         | :? Type as other ->
@@ -32,4 +33,5 @@ let Into raw =
             Name = raw.name
             Temperature = raw.data.preciseTemperature
             Time = DateTime.Parse(raw.data.time)
+            Events = []
         }

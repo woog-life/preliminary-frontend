@@ -17,6 +17,7 @@ type Msg =
     | InitialLoad
     | GetLake
     | AddLake of Lake.RawType
+    | AddEvents of Booking.RawType
     | GetWeather
     | UpdateWeather of Weather.RawType
 
@@ -31,6 +32,16 @@ let getLake uuid model dispatch =
 
         if (not model.LakeLoadInit) then
             AddLake res |> dispatch
+    }
+
+let getEvents uuid dispatch =
+    promise {
+        let url =
+            sprintf "https://api.woog.life/lake/%s/booking" uuid
+
+        let! res = Fetch.get url
+
+        AddEvents res |> dispatch
     }
 
 let API_KEY = "{{API_KEY}}"
@@ -93,7 +104,18 @@ let update (msg: Msg) (model: Model) =
                   Lake = Some(Lake.Into lake)
                   InitialLoad = false
                   LakeLoadInit = true },
-            Cmd.Empty
+            Cmd.ofSub (fun dispatch -> getEvents lake.id dispatch |> Promise.start)
+    | AddEvents events ->
+        if model.Lake.IsNone then
+            model, Cmd.Empty
+        else
+            let lake = model.Lake.Value
+
+            let lake =
+                { lake with
+                      Events = (List.map Booking.Into events.events) }
+
+            { model with Lake = Some(lake) }, Cmd.Empty
     | UpdateWeather weather ->
         { model with
               Weather = Some(Weather.Into weather) },
@@ -106,13 +128,73 @@ let formatDateTime (time: DateTime) (format: string) = time.ToString(format)
 let displaySun (weather: Weather.Type) =
     div [ ClassName "mb-4"
           Style [ FontSize "2em" ] ] [
-        p [ Id "sun-information-header" ] [ str "Sonne" ]
+        p [ Id "sun-information-header" ] [
+            str "Sonne"
+        ]
         span [ Id "sunrise"; Title "sunrise" ] [
             str (formatDateTime weather.Sunrise.UtcDateTime sunTimeFormat)
         ]
         str " - "
         span [ Id "sunrise"; Title "sunset" ] [
             str (formatDateTime weather.Sunset.UtcDateTime sunTimeFormat)
+        ]
+    ]
+
+let displayEventHeader =
+    thead [] [
+        tr [] [
+            th [] [ str "Buchungs-Link" ]
+            th [] [ str "Verkaufsstart" ]
+            th [] [ str "Startzeit Slot" ]
+            th [] [ str "Endzeit Slot" ]
+        ]
+    ]
+
+let displayEvent (event: Booking.Type) =
+    tr [] [
+        td [] [
+            a [ Href event.BookingLink
+                ClassName "text-white" ] [
+                str "Hier buchen"
+            ]
+        ]
+        td [] [
+            str (formatDateTime event.SalesStartTime timeFormat)
+        ]
+        td [] [
+            str (formatDateTime event.BeginTime timeFormat)
+        ]
+        td [] [
+            str (formatDateTime event.EndTime timeFormat)
+        ]
+    ]
+
+type HtmlAttr =
+    | [<CompiledName("aria-valuenow")>] AriaValueNow of string
+    | [<CompiledName("aria-valuemin")>] AriaValueMin of string
+    | [<CompiledName("aria-valuemax")>] AriaValueMax of string
+    | [<CompiledName("data-toggle")>] DataToggle of string
+    | [<CompiledName("data-target")>] DataTarget of string
+    | [<CompiledName("data-dismiss")>] DataDismiss of string
+    | [<CompiledName("type")>] InputType of string
+    | [<CompiledName("for")>] For of string
+    interface IHTMLProp
+
+let displayEventCollapseButton =
+    button [ ClassName "btn btn-primary mb-2"
+             Type "button"
+             DataToggle "collapse"
+             DataTarget "#events"
+             AriaExpanded false
+             AriaControls "events" ] [
+        str "Toggle events"
+    ]
+
+let displayEvents (events: Booking.Type list) =
+    div [ ClassName "collapse"; Id "events" ] [
+        table [ ClassName "table table-dark" ] [
+            displayEventHeader
+            tbody [] (List.map displayEvent events)
         ]
     ]
 
@@ -157,6 +239,13 @@ let displayLake model =
                 Style [ FontSize "12em" ] ] [
                 displayTemp model
             ]
+            (match model.Lake with
+             | Some lake ->
+                 div [] [
+                     displayEventCollapseButton
+                     displayEvents lake.Events
+                 ]
+             | None -> span [] [])
         ]
     ]
 
