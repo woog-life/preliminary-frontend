@@ -140,9 +140,9 @@ let displayEventHeader =
         tr [] [
             th [] [ str "Badestelle" ]
             th [] [ str "Buchungs-Link" ]
-            th [] [ str "Verkaufsstart" ]
             th [] [ str "Startzeit Slot" ]
             th [] [ str "Endzeit Slot" ]
+            th [] [ str "Verkaufsstart" ]
         ]
     ]
 
@@ -157,13 +157,13 @@ let displayEvent (event: Booking.Type) =
             ]
         ]
         td [] [
-            str (formatDateTime event.SalesStartTime timeFormat)
-        ]
-        td [] [
             str (formatDateTime event.BeginTime timeFormat)
         ]
         td [] [
             str (formatDateTime event.EndTime timeFormat)
+        ]
+        td [] [
+            str (formatDateTime event.SalesStartTime timeFormat)
         ]
     ]
 
