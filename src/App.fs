@@ -210,7 +210,7 @@ let displayTemp model =
 let displayLake model =
     div [ Id "data"
           ClassName "text-center h-75 text-white"
-          Style [ MarginTop "10%"
+          Style [ MarginTop "4%"
                   Padding "10px"
                   FontFamily "Chawp" ] ] [
         div [] [
