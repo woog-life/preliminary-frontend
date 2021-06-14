@@ -35,6 +35,7 @@ let getLake uuid model dispatch =
 
 let UUID = "69c8438b-5aef-442f-a70d-e0d783ea2b38"
 let MUEHLCHEN_UUID = "25aa2968-e34e-4f86-87cc-56b16b5aff36"
+let ALSTER_UUID = "55e5f52a-2de8-458a-828f-3c043ef458d9"
 
 let getEvents uuid dispatch =
     promise {
@@ -229,6 +230,11 @@ let displayLakeChooser (lake: Lake.Type option) dispatch =
                      Type "button"
                      OnClick(fun _ -> GetLake MUEHLCHEN_UUID |> dispatch) ] [
                 str "Arheilger Mühlchen"
+            ]
+            button [ ClassName "dropdown-item"
+                     Type "button"
+                     OnClick(fun _ -> GetLake ALSTER_UUID |> dispatch) ] [
+                str "Alster in Hamburg"
             ]
         ]
     ]
