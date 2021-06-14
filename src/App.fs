@@ -156,6 +156,7 @@ let displayEvent (event: Booking.Type) =
         td [] [ str event.Variation ]
         td [] [
             a [ Href event.BookingLink
+                Target "_blank"
                 ClassName "text-white" ] [
                 str "Hier buchen"
             ]
