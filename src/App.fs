@@ -189,7 +189,7 @@ let displayEventCollapseButton =
              DataTarget "#events"
              AriaExpanded false
              AriaControls "events" ] [
-        str "Toggle verfügbare events"
+        str "Verfügbare Buchungsslots"
     ]
 
 let displayEvents (events: Booking.Type list) =
