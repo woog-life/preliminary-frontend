@@ -143,6 +143,7 @@ let displaySun (weather: Weather.Type) =
 let displayEventHeader =
     thead [] [
         tr [] [
+            th [] [ str "Badestelle" ]
             th [] [ str "Buchungs-Link" ]
             th [] [ str "Verkaufsstart" ]
             th [] [ str "Startzeit Slot" ]
@@ -152,6 +153,7 @@ let displayEventHeader =
 
 let displayEvent (event: Booking.Type) =
     tr [] [
+        td [] [ str event.Variation ]
         td [] [
             a [ Href event.BookingLink
                 ClassName "text-white" ] [
