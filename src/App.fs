@@ -21,7 +21,7 @@ type Msg =
     | AddLake of Lake.RawType
     | AddEvents of Booking.RawType
     | GetWeather
-    | UpdateWeather of Weather.RawType
+    | UpdateWeather of Weather.RawType option
     | GetLakes
     | AddLakes of LakeInfo.RawType
 
@@ -63,8 +63,14 @@ let getWeather dispatch =
         let url =
             sprintf "https://api.openweathermap.org/data/2.5/weather?q=Darmstadt&units=metric&appid=%s" API_KEY
 
-        let! res = Fetch.get url
-        UpdateWeather res |> dispatch
+        let! res = Fetch.tryGet url
+
+        let weather =
+            match res with
+            | Ok weather -> Some weather
+            | _ -> None
+
+        UpdateWeather weather |> dispatch
     }
 
 let init () : Model * Cmd<Msg> =
@@ -120,10 +126,15 @@ let update (msg: Msg) (model: Model) =
             { model with Lake = Some(lake) }, Cmd.Empty
     | UpdateWeather weather ->
         { model with
-              Weather = Some(Weather.Into weather) },
+              Weather =
+                  if weather.IsSome then
+                      Some(Weather.Into weather.Value)
+                  else
+                      None },
         Cmd.Empty
     | AddLakes lakes ->
-        { model with Lakes = (List.map LakeInfo.Into lakes.lakes) },
+        { model with
+              Lakes = (List.map LakeInfo.Into lakes.lakes) },
         if lakes.lakes.Length > 0 then
             (Cmd.ofSub (fun dispatch -> GetLake lakes.lakes.Head.id |> dispatch))
         else
@@ -219,10 +230,10 @@ let displayTemp model =
         | Some lake ->
             match lake.Temperature with
             | Some temperature ->
-                    if temperature.StartsWith("0.") then
-                        "/"
-                    else
-                        sprintf "%s°" temperature
+                if temperature.StartsWith("0.") then
+                    "/"
+                else
+                    sprintf "%s°" temperature
             | None -> "/"
         | None -> "/"
     )
@@ -275,9 +286,11 @@ let displayLake model dispatch =
              | Some lake ->
                  p [ Id "data-updated-time"
                      Style [ FontSize "2em" ] ] [
-                     str (match lake.Time with
-                          | Some time -> (formatDateTime time timeFormat)
-                          | None -> "No data available")
+                     str (
+                         match lake.Time with
+                         | Some time -> (formatDateTime time timeFormat)
+                         | None -> "No data available"
+                     )
                  ]
              | None -> span [] [])
             p [ Id "lake-water-temperature"
