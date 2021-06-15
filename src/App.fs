@@ -23,11 +23,11 @@ type Msg =
     | GetWeather
     | UpdateWeather of Weather.RawType option
     | GetLakes
-    | AddLakes of LakeInfo.RawType
+    | AddLakes of RawType
 
 let PRECISION = 1
 
-let getLake uuid model dispatch =
+let getLake uuid dispatch =
     promise {
         let url =
             sprintf "https://api.woog.life/lake/%s?precision=%d" uuid PRECISION
@@ -105,7 +105,7 @@ let update (msg: Msg) (model: Model) =
         { model with
               LakeLoadInit = true
               InitialLoad = false },
-        Cmd.ofSub (fun dispatch -> getLake uuid model dispatch |> Promise.start)
+        Cmd.ofSub (fun dispatch -> getLake uuid dispatch |> Promise.start)
     | GetWeather -> model, Cmd.ofSub (fun dispatch -> getWeather dispatch |> Promise.start)
     | AddLake lake ->
         { model with
@@ -134,7 +134,7 @@ let update (msg: Msg) (model: Model) =
         Cmd.Empty
     | AddLakes lakes ->
         { model with
-              Lakes = (List.map LakeInfo.Into lakes.lakes) },
+              Lakes = (List.map Into lakes.lakes) },
         if lakes.lakes.Length > 0 then
             let lake =
                 match List.filter (fun lake -> lake.id = "69c8438b-5aef-442f-a70d-e0d783ea2b38") lakes.lakes with
@@ -145,7 +145,6 @@ let update (msg: Msg) (model: Model) =
         else
             Cmd.Empty
     | GetLakes -> model, Cmd.ofSub (fun dispatch -> getLakes dispatch |> Promise.start)
-
 
 let timeFormat = "HH:mm dd.MM.yyyy"
 let sunTimeFormat = "HH:mm"
@@ -271,7 +270,6 @@ let displayLakeChooser (lake: Lake.Type option) (lakes: LakeInfo.LakeInfo list) 
                 lakes)
     ]
 
-
 let displayLake model dispatch =
     div [ Id "data"
           ClassName "text-center h-75 text-white"
@@ -313,8 +311,11 @@ let displayLake model dispatch =
             ]
             (match model.Lake with
              | Some lake ->
-                 if List.contains lake.Uuid ["d074654c-dedd-46c3-8042-af55c93c910e"; "55e5f52a-2de8-458a-828f-3c043ef458d9"] then
-                    span [] []
+                 if List.contains
+                     lake.Uuid
+                     [ "d074654c-dedd-46c3-8042-af55c93c910e"
+                       "55e5f52a-2de8-458a-828f-3c043ef458d9" ] then
+                     span [] []
                  else
                      div [] [
                          displayEventCollapseButton
