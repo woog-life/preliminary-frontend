@@ -84,8 +84,6 @@ let init () : Model * Cmd<Msg> =
             GetLakes |> dispatch
             dispatch GetWeather)
 
-let unwrapMapOrDefault (opt: 'b option) (m: 'b -> 't) (def: 't) = if opt.IsSome then m opt.Value else def
-
 let update (msg: Msg) (model: Model) =
     match msg with
     | InitialLoad ->
