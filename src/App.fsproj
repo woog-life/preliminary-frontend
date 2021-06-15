@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+      <Compile Include="LakeInfo.fs" />
       <Compile Include="Booking.fs" />
       <Compile Include="Lake.fs" />
       <Compile Include="Weather.fs" />

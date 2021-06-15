@@ -5,13 +5,15 @@ open Elmish
 open Elmish.React
 open Fable.React
 open Fable.React.Props
+open LakeInfo
 open Thoth.Fetch
 
 type Model =
     { Lake: Lake.Type option
       LakeLoadInit: bool
       InitialLoad: bool
-      Weather: Weather.Type option }
+      Weather: Weather.Type option
+      Lakes: LakeInfo.LakeInfo list }
 
 type Msg =
     | InitialLoad
@@ -20,6 +22,8 @@ type Msg =
     | AddEvents of Booking.RawType
     | GetWeather
     | UpdateWeather of Weather.RawType
+    | GetLakes
+    | AddLakes of LakeInfo.RawType
 
 let PRECISION = 1
 
@@ -33,9 +37,14 @@ let getLake uuid model dispatch =
         AddLake res |> dispatch
     }
 
-let UUID = "69c8438b-5aef-442f-a70d-e0d783ea2b38"
-let MUEHLCHEN_UUID = "25aa2968-e34e-4f86-87cc-56b16b5aff36"
-let ALSTER_UUID = "55e5f52a-2de8-458a-828f-3c043ef458d9"
+let getLakes dispatch =
+    promise {
+        let url = "https://api.woog.life/lake"
+
+        let! res = Fetch.get url
+
+        AddLakes res |> dispatch
+    }
 
 let getEvents uuid dispatch =
     promise {
@@ -62,10 +71,11 @@ let init () : Model * Cmd<Msg> =
     { InitialLoad = true
       Lake = None
       LakeLoadInit = false
-      Weather = None },
+      Weather = None
+      Lakes = [] },
     Cmd.ofSub
         (fun dispatch ->
-            GetLake UUID |> dispatch
+            GetLakes |> dispatch
             dispatch GetWeather)
 
 let unwrapMapOrDefault (opt: 'b option) (m: 'b -> 't) (def: 't) = if opt.IsSome then m opt.Value else def
@@ -84,10 +94,7 @@ let update (msg: Msg) (model: Model) =
             if model.LakeLoadInit then
                 Cmd.Empty
             else
-                Cmd.ofSub
-                    (fun dispatch ->
-                        GetLake UUID |> dispatch
-                        dispatch GetWeather)
+                Cmd.Empty
     | GetLake uuid ->
         { model with
               LakeLoadInit = true
@@ -115,6 +122,14 @@ let update (msg: Msg) (model: Model) =
         { model with
               Weather = Some(Weather.Into weather) },
         Cmd.Empty
+    | AddLakes lakes ->
+        { model with Lakes = (List.map LakeInfo.Into lakes.lakes) },
+        if lakes.lakes.Length > 0 then
+            (Cmd.ofSub (fun dispatch -> GetLake lakes.lakes.Head.id |> dispatch))
+        else
+            Cmd.Empty
+    | GetLakes -> model, Cmd.ofSub (fun dispatch -> getLakes dispatch |> Promise.start)
+
 
 let timeFormat = "HH:mm dd.MM.yyyy"
 let sunTimeFormat = "HH:mm"
@@ -190,7 +205,8 @@ let displayEventCollapseButton =
     ]
 
 let displayEvents (events: Booking.Type list) =
-    div [ ClassName "collapse show"; Id "events" ] [
+    div [ ClassName "collapse show"
+          Id "events" ] [
         table [ ClassName "table table-dark" ] [
             displayEventHeader
             tbody [] (List.map displayEvent events)
@@ -200,11 +216,15 @@ let displayEvents (events: Booking.Type list) =
 let displayTemp model =
     str (
         match model.Lake with
-        | Some lake -> if lake.Temperature.StartsWith("0.") then "/" else sprintf "%s°" lake.Temperature
+        | Some lake ->
+            if lake.Temperature.StartsWith("0.") then
+                "/"
+            else
+                sprintf "%s°" lake.Temperature
         | None -> "/"
     )
 
-let displayLakeChooser (lake: Lake.Type option) dispatch =
+let displayLakeChooser (lake: Lake.Type option) (lakes: LakeInfo.LakeInfo list) dispatch =
     div [ ClassName "dropdown mb-4" ] [
         button [ ClassName "btn btn-secondary dropdown-toggle"
                  Type "button"
@@ -219,24 +239,17 @@ let displayLakeChooser (lake: Lake.Type option) dispatch =
                     "Choose"
             )
         ]
-        div [ Class "dropdown-menu"
-              AriaLabelledby "dropdownLakeChooseButton" ] [
-            button [ ClassName "dropdown-item"
-                     Type "button"
-                     OnClick(fun _ -> GetLake UUID |> dispatch) ] [
-                str "Großer Woog"
-            ]
-            button [ ClassName "dropdown-item"
-                     Type "button"
-                     OnClick(fun _ -> GetLake MUEHLCHEN_UUID |> dispatch) ] [
-                str "Arheilger Mühlchen"
-            ]
-            button [ ClassName "dropdown-item"
-                     Type "button"
-                     OnClick(fun _ -> GetLake ALSTER_UUID |> dispatch) ] [
-                str "Alster in Hamburg"
-            ]
-        ]
+        div
+            [ Class "dropdown-menu"
+              AriaLabelledby "dropdownLakeChooseButton" ]
+            (List.map
+                (fun _lake ->
+                    button [ ClassName "dropdown-item"
+                             Type "button"
+                             OnClick(fun _ -> GetLake _lake.Id |> dispatch) ] [
+                        str _lake.Name
+                    ])
+                lakes)
     ]
 
 
@@ -247,7 +260,7 @@ let displayLake model dispatch =
                   Padding "10px"
                   FontFamily "Chawp" ] ] [
         div [] [
-            (displayLakeChooser model.Lake dispatch)
+            (displayLakeChooser model.Lake model.Lakes dispatch)
             (match model.Weather with
              | Some weather -> displaySun weather
              | None -> span [] [])
