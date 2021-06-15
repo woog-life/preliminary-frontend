@@ -160,7 +160,7 @@ let displaySun (weather: Weather.Type) =
             str (formatDateTime weather.Sunrise.UtcDateTime sunTimeFormat)
         ]
         str " - "
-        span [ Id "sunrise"; Title "sunset" ] [
+        span [ Id "sunset"; Title "sunset" ] [
             str (formatDateTime weather.Sunset.UtcDateTime sunTimeFormat)
         ]
     ]
