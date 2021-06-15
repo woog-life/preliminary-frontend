@@ -136,7 +136,10 @@ let update (msg: Msg) (model: Model) =
         { model with
               Lakes = (List.map LakeInfo.Into lakes.lakes) },
         if lakes.lakes.Length > 0 then
-            (Cmd.ofSub (fun dispatch -> GetLake lakes.lakes.Head.id |> dispatch))
+            let lake = match List.filter (fun lake -> lake.id = "69c8438b-5aef-442f-a70d-e0d783ea2b38") lakes.lakes with
+                       | x :: _ -> x.id
+                       | [] -> lakes.lakes.Head.id
+            (Cmd.ofSub (fun dispatch -> GetLake lake |> dispatch))
         else
             Cmd.Empty
     | GetLakes -> model, Cmd.ofSub (fun dispatch -> getLakes dispatch |> Promise.start)
