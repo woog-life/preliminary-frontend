@@ -1,0 +1,4 @@
+# We suggest using the backend api (api.woog.life) instead of using the js generated frontend.
+# find all related projects here: https://github.com/woog-life/
+User-agent: *
+Disallow:
