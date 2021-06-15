@@ -281,7 +281,15 @@ let displayLake model dispatch =
         div [] [
             (displayLakeChooser model.Lake model.Lakes dispatch)
             (match model.Weather with
-             | Some weather -> displaySun weather
+             | Some weather ->
+                 if model.Lake.IsSome
+                    && List.contains
+                        model.Lake.Value.Uuid
+                        [ "69c8438b-5aef-442f-a70d-e0d783ea2b38"
+                          "25aa2968-e34e-4f86-87cc-56b16b5aff36" ] then
+                     displaySun weather
+                 else
+                     span [] []
              | None -> span [] [])
             p [ Id "water-temperature-header"
                 Style [ FontSize "2em" ] ] [
