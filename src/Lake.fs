@@ -10,14 +10,14 @@ type RawTypeData =
 type RawType =
     { id: string
       name: string
-      data: RawTypeData }
+      data: RawTypeData option }
 
 [<CustomEquality; NoComparison>]
 type Type =
     { Uuid: string
       Name: string
-      Time: DateTime
-      Temperature: string
+      Time: DateTime option
+      Temperature: string option
       Events: Booking.Type list }
     override this.Equals(other) =
         match other with
@@ -31,7 +31,7 @@ let Into raw =
         {
             Uuid = raw.id
             Name = raw.name
-            Temperature = raw.data.preciseTemperature
-            Time = DateTime.Parse(raw.data.time)
+            Temperature = if raw.data.IsSome then Some raw.data.Value.preciseTemperature else None
+            Time = if raw.data.IsSome then Some (DateTime.Parse(raw.data.Value.time)) else None
             Events = []
         }

@@ -217,10 +217,13 @@ let displayTemp model =
     str (
         match model.Lake with
         | Some lake ->
-            if lake.Temperature.StartsWith("0.") then
-                "/"
-            else
-                sprintf "%s°" lake.Temperature
+            match lake.Temperature with
+            | Some temperature ->
+                    if temperature.StartsWith("0.") then
+                        "/"
+                    else
+                        sprintf "%s°" temperature
+            | None -> "/"
         | None -> "/"
     )
 
@@ -272,7 +275,9 @@ let displayLake model dispatch =
              | Some lake ->
                  p [ Id "data-updated-time"
                      Style [ FontSize "2em" ] ] [
-                     str (formatDateTime lake.Time timeFormat)
+                     str (match lake.Time with
+                          | Some time -> (formatDateTime time timeFormat)
+                          | None -> "No data available")
                  ]
              | None -> span [] [])
             p [ Id "lake-water-temperature"
