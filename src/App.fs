@@ -233,11 +233,11 @@ let displayTemp model =
             match lake.Temperature with
             | Some temperature ->
                 if temperature.StartsWith("0.") then
-                    "/"
+                    ""
                 else
                     sprintf "%s°" temperature
-            | None -> "/"
-        | None -> "/"
+            | None -> ""
+        | None -> ""
     )
 
 let displayLakeChooser (lake: Lake.Type option) (lakes: LakeInfo.LakeInfo list) dispatch =
