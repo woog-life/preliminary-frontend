@@ -21,17 +21,22 @@ type Type =
       Events: Booking.Type list }
     override this.Equals(other) =
         match other with
-        | :? Type as other ->
-            this.Uuid = other.Uuid
+        | :? Type as other -> this.Uuid = other.Uuid
         | _ -> false
 
     override this.GetHashCode() = hash this.Uuid
 
 let Into raw =
-        {
-            Uuid = raw.id
-            Name = raw.name
-            Temperature = if raw.data.IsSome then Some raw.data.Value.preciseTemperature else None
-            Time = if raw.data.IsSome then Some (DateTime.Parse(raw.data.Value.time)) else None
-            Events = []
-        }
+    { Uuid = raw.id
+      Name = raw.name
+      Temperature =
+          if raw.data.IsSome then
+              Some raw.data.Value.preciseTemperature
+          else
+              None
+      Time =
+          if raw.data.IsSome then
+              Some(DateTime.Parse(raw.data.Value.time))
+          else
+              None
+      Events = [] }
