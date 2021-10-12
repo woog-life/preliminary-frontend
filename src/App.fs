@@ -309,17 +309,14 @@ let displayLake model dispatch =
             ]
             (match model.Lake with
              | Some lake ->
-                 if List.contains
-                     lake.Uuid
-                     [ "d074654c-dedd-46c3-8042-af55c93c910e"
-                       "55e5f52a-2de8-458a-828f-3c043ef458d9"
-                       "acf32f07-e702-4e9e-b766-fb8993a71b21" ] then
-                     span [] []
-                 else
+                 let lakeInfo = List.find (fun x -> x.Id = model.Lake.Value.Uuid) model.Lakes
+                 if List.contains (Booking) lakeInfo.Features then
                      div [] [
                          displayEventCollapseButton
                          displayEvents lake.Events
                      ]
+                 else
+                     span [] []
              | None -> span [] [])
         ]
     ]
