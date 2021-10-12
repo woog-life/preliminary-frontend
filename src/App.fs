@@ -287,29 +287,41 @@ let displayLake model dispatch =
                  else
                      span [] []
              | None -> span [] [])
-            p [ Id "water-temperature-header"
-                Style [ FontSize "2em" ] ] [
-                str "Wasser (°C)"
-            ]
+
+            (if model.Lake.IsSome then
+                 let lakeInfo =
+                     List.find (fun x -> x.Id = model.Lake.Value.Uuid) model.Lakes
+
+                 if List.contains Temperature lakeInfo.Features then
+                     span [] [
+                         p [ Id "water-temperature-header"
+                             Style [ FontSize "2em" ] ] [
+                             str "Wasser (°C)"
+                         ]
+                         p [ Id "data-updated-time"
+                             Style [ FontSize "2em" ] ] [
+                             str (
+                                 match model.Lake.Value.Time with
+                                 | Some time -> (formatDateTime time timeFormat)
+                                 | None -> "No data available"
+                             )
+                         ]
+                         p [ Id "lake-water-temperature"
+                             ClassName "ml-4"
+                             Style [ FontSize "12em" ] ] [
+                             displayTemp model
+                         ]
+                     ]
+                 else
+                     span [ Style [ FontSize "2em" ] ] [ str "No data available" ]
+             else
+                 span [ Style [ FontSize "2em" ] ] [ str "No data available" ])
+
             (match model.Lake with
              | Some lake ->
-                 p [ Id "data-updated-time"
-                     Style [ FontSize "2em" ] ] [
-                     str (
-                         match lake.Time with
-                         | Some time -> (formatDateTime time timeFormat)
-                         | None -> "No data available"
-                     )
-                 ]
-             | None -> span [] [])
-            p [ Id "lake-water-temperature"
-                ClassName "ml-4"
-                Style [ FontSize "12em" ] ] [
-                displayTemp model
-            ]
-            (match model.Lake with
-             | Some lake ->
-                 let lakeInfo = List.find (fun x -> x.Id = model.Lake.Value.Uuid) model.Lakes
+                 let lakeInfo =
+                     List.find (fun x -> x.Id = model.Lake.Value.Uuid) model.Lakes
+
                  if List.contains (Booking) lakeInfo.Features then
                      div [] [
                          displayEventCollapseButton
