@@ -2,7 +2,7 @@ namespace: wooglife
 
 deployment:
   name: preliminary-frontend
-  image: ghcr.io/wooglife/preliminary-frontend:__TAG__
+  image: ghcr.io/woog-life/preliminary-frontend:__TAG__
   imagePullPolicy: Always
   revisionHistoryLimit: 1
   replicas: 2
