@@ -1,4 +1,4 @@
-name: Build/Publish docker image
+name: Build and deploy
 
 on:
   push:
@@ -6,67 +6,65 @@ on:
       - master
 
 jobs:
-  build:
-    name: "Build bundle.js"
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/`1`v2
+      - name: update tag in manifest.yml
+        run: sed -i -e "s#__TAG__#${GITHUB_SHA}#g" values.yaml
+      - uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: helm lint
+          kubeconfig: ${{ secrets.KUBECONFIG_RAW }}
+      - uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: helm lint --strict
+          kubeconfig: ${{ secrets.KUBECONFIG_RAW }}
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "3.1.x"
       - run: sed -i -e "s#{{TAG}}#$(echo ${GITHUB_SHA})#g" src/App.fs
+      - run: sed -i -e "s/|> Program.withConsoleTrace//g" src/App.fs
       - run: sed -i -e "s#{{API_KEY}}#${{ secrets.OPENWEATHERMAP_APIKEY_RAW }}#g" src/App.fs
-      - run: sed -i -e "s#|> Program.withConsoleTrace##g" src/App.fs
       - run: npm install
       - run: npm run prod
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v1
         with:
-          name: publicdir
+          name: public
           path: public/
+
   build_push_docker:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, lint]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v1
+        with:
+          name: public
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v1
-        with:
-          name: publicdir
-      - run: |
-          rm -rf public
-          mv publicdir public
       - name: Build the tagged Docker image
-        run: docker build -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
+        run: docker build -t ghcr.io/wooglife/preliminary-frontend:${GITHUB_SHA} .
       - name: Push the tagged Docker image
-        run: docker push ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA}
+        run: docker push ghcr.io/wooglife/preliminary-frontend:${GITHUB_SHA}
+
   deploy:
-    name: "Publish to k8s"
     runs-on: ubuntu-latest
     needs: build_push_docker
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: update tag in manifest.yml
-        run: sed -i -e "s#{{TAG}}#$(echo ${GITHUB_SHA})#g" .kubernetes/manifest.yaml
-      - uses: danielr1996/kubectl-action@1.0.0
-        name: apply config
-        with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-          args: apply -f .kubernetes/manifest.yaml
-  alert:
-    name: "alert on failure"
-    runs-on: ubuntu-latest
-    needs: [ build, build_push_docker, deploy ]
-    if: failure()
-    steps:
-      - uses: appleboy/telegram-action@master
-        name: send failure alert
-        with:
-          format: markdown
-          to: ${{ secrets.CI_FAILURE_TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_CI_TOKEN_RAW }}
-          args: job failed in woog-life/preliminary-frontend after push ([CI](https://github.com/woog-life/preliminary-frontend/actions))
+        run: sed -i -e "s#__TAG__#${GITHUB_SHA}#g" values.yaml
+      - uses: WyriHaximus/github-action-helm3@v2
+        with: 
+          exec: helm upgrade preliminary-frontend . --install --namespace=wooglife --atomic
+          kubeconfig: ${{ secrets.KUBECONFIG_RAW }}

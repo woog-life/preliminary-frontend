@@ -1,0 +1,31 @@
+namespace: wooglife
+
+deployment:
+  name: preliminary-frontend
+  image: ghcr.io/wooglife/preliminary-frontend:__TAG__
+  imagePullPolicy: Always
+  revisionHistoryLimit: 1
+  replicas: 2
+  ports:
+  - 80
+  labels:
+    app: preliminary-frontend
+  requests:
+    cpu: 50m
+    memory: 10Mi
+  limit:
+    cpu: 300m
+    memory: 50Mi
+
+service:
+  name: preliminary-frontend
+  port: 80
+  targetPort: 80
+  appSelector: preliminary-frontend
+
+ingress:
+  hosts:
+    - woog.life
+  secret: tls-preliminary-frontend
+  issuer: letsencrypt-issuer-http
+  name: preliminary-frontend
