@@ -15,7 +15,7 @@
     "webpack-dev-server": "4.7.3"
   },
   "devDependencies": {
-    "css-loader": "3.6.0",
+    "css-loader": "6.5.1",
     "file-loader": "6.2.0",
     "html-webpack-plugin": "4.5.2",
     "mini-css-extract-plugin": "0.12.0",
