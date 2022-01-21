@@ -43,7 +43,7 @@ jobs:
     needs: [build, lint]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
           name: public
       - name: Login to GitHub Container Registry
