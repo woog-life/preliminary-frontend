@@ -33,7 +33,7 @@ jobs:
       - run: sed -i -e "s#{{API_KEY}}#${{ secrets.OPENWEATHERMAP_APIKEY_RAW }}#g" src/App.fs
       - run: npm install
       - run: npm run prod
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: public
           path: public/
