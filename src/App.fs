@@ -274,13 +274,14 @@ let displayBookings model (lake: Lake.Type option) =
         let lakeInfo =
             List.find (fun x -> x.Id = lake.Uuid) model.Lakes
 
-        if List.contains (Booking) lakeInfo.Features then
+        let hideEvents = lake.Events.IsEmpty || not (List.contains (Booking) lakeInfo.Features)
+        if hideEvents then
+            span [] []
+        else
             div [] [
                 displayEventCollapseButton
                 displayEvents lake.Events
             ]
-        else
-            span [] []
     | None -> span [] []
 
 let displayLake model dispatch =
