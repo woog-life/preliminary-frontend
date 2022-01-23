@@ -1,8 +1,10 @@
 module App
 
 open System
+open Browser
 open Elmish
 open Elmish.React
+open Fable.Import
 open Fable.React
 open Fable.React.Props
 open LakeInfo
@@ -73,6 +75,19 @@ let getWeather dispatch =
         UpdateWeather weather |> dispatch
     }
 
+let findCookieValue (name: string) : string option =
+    let kvArrToPair (kvArr: string []) : string * string =
+        match kvArr with
+        | [| k; v |] -> (k, v)
+        | _ -> ("", "")
+
+    let rawCookies: string = Dom.document.cookie
+
+    rawCookies.Split ';'
+    |> Array.map (fun (s: string) -> s.Trim().Split '=' |> kvArrToPair)
+    |> Map.ofArray
+    |> Map.tryFind name
+
 let init () : Model * Cmd<Msg> =
     { InitialLoad = true
       Lake = None
@@ -95,11 +110,10 @@ let update (msg: Msg) (model: Model) =
             { model with
                   InitialLoad = false
                   LakeLoadInit = true },
-            if model.LakeLoadInit then
-                Cmd.Empty
-            else
-                Cmd.Empty
+            Cmd.Empty
     | GetLake uuid ->
+        JsCookie.set "initial-lake-uuid" uuid |> ignore
+
         { model with
               LakeLoadInit = true
               InitialLoad = false },
@@ -134,8 +148,13 @@ let update (msg: Msg) (model: Model) =
         { model with
               Lakes = (List.map Into lakes.lakes) },
         if lakes.lakes.Length > 0 then
+            let defaultUuid =
+                match findCookieValue "initial-lake-uuid" with
+                | Some uuid -> uuid
+                | None -> "69c8438b-5aef-442f-a70d-e0d783ea2b38"
+
             let lake =
-                match List.filter (fun lake -> lake.id = "69c8438b-5aef-442f-a70d-e0d783ea2b38") lakes.lakes with
+                match List.filter (fun lake -> lake.id = defaultUuid) lakes.lakes with
                 | x :: _ -> x.id
                 | [] -> lakes.lakes.Head.id
 
@@ -274,7 +293,10 @@ let displayBookings model (lake: Lake.Type option) =
         let lakeInfo =
             List.find (fun x -> x.Id = lake.Uuid) model.Lakes
 
-        let hideEvents = lake.Events.IsEmpty || not (List.contains (Booking) lakeInfo.Features)
+        let hideEvents =
+            lake.Events.IsEmpty
+            || not (List.contains (Booking) lakeInfo.Features)
+
         if hideEvents then
             span [] []
         else
