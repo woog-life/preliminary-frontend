@@ -268,6 +268,21 @@ let displayLakeChooser (lake: Lake.Type option) (lakes: LakeInfo.LakeInfo list) 
                 lakes)
     ]
 
+let displayBookings model (lake: Lake.Type option) =
+    match lake with
+    | Some lake ->
+        let lakeInfo =
+            List.find (fun x -> x.Id = lake.Uuid) model.Lakes
+
+        if List.contains (Booking) lakeInfo.Features then
+            div [] [
+                displayEventCollapseButton
+                displayEvents lake.Events
+            ]
+        else
+            span [] []
+    | None -> span [] []
+
 let displayLake model dispatch =
     div [ Id "data"
           ClassName "text-center h-75 text-white"
@@ -313,23 +328,15 @@ let displayLake model dispatch =
                          ]
                      ]
                  else
-                     span [ Style [ FontSize "2em" ] ] [ str "No data available" ]
-             else
-                 span [ Style [ FontSize "2em" ] ] [ str "No data available" ])
-
-            (match model.Lake with
-             | Some lake ->
-                 let lakeInfo =
-                     List.find (fun x -> x.Id = model.Lake.Value.Uuid) model.Lakes
-
-                 if List.contains (Booking) lakeInfo.Features then
-                     div [] [
-                         displayEventCollapseButton
-                         displayEvents lake.Events
+                     span [ Style [ FontSize "2em" ] ] [
+                         str "No data available"
                      ]
-                 else
-                     span [] []
-             | None -> span [] [])
+             else
+                 span [ Style [ FontSize "2em" ] ] [
+                     str "No data available"
+                 ])
+
+            displayBookings model model.Lake
         ]
     ]
 
