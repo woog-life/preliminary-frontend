@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 as builder
 
-ARG GITHUBSHA 
+ARG GITHUBSHA
 
 ARG OPENWEATHERMAP_APIKEY_RAW=""
 
@@ -21,9 +21,8 @@ RUN sed -i -e "s#{{TAG}}#$GITHUBSHA#g" src/App.fs && \
     sed -i -e "s/|> Program.withConsoleTrace//g" src/App.fs && \
     sed -i -e "s#{{API_KEY}}#$OPENWEATHERMAP_APIKEY_RAW#g" src/App.fs
 
-RUN npm install && \
-    npm run prod
-
+RUN npm install \
+    && npm run prod
 
 
 FROM nginx:1.21-alpine
