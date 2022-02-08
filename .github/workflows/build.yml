@@ -23,9 +23,6 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v1
-        with:
-          name: public
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
