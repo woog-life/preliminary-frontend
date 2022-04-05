@@ -16,3 +16,9 @@ body {
     font-family: "Chawp";
     src: url('chawp.ttf');
 }
+
+#water-history {
+    color: #fff;
+    text-decoration-line: none;
+    text-decoration-line: underline;
+}

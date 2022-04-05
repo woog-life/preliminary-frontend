@@ -332,9 +332,16 @@ let displayLake model dispatch =
 
                  if List.contains Temperature lakeInfo.Features then
                      span [] [
-                         p [ Id "water-temperature-header"
+                         span [
+                             Id "water-temperature-header"
                              Style [ FontSize "2em" ] ] [
                              str "Wasser (°C)"
+                         ]
+                         br []
+                         a [ Href (sprintf "https://sos-de-fra-1.exo.io/wooglife/%s.png" model.Lake.Value.Uuid)
+                             Id "water-history"
+                             Style [ FontSize "1.3em" ] ] [
+                             str "Historie"
                          ]
                          p [ Id "data-updated-time"
                              Style [ FontSize "2em" ] ] [
