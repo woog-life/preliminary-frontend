@@ -26,6 +26,7 @@ service:
 ingress:
   hosts:
     - woog.life
+    - darmstadt.live
   secret: tls-preliminary-frontend
   issuer: letsencrypt-issuer-http
   name: preliminary-frontend
