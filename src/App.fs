@@ -338,7 +338,7 @@ let displayLake model dispatch =
                              str "Wasser (°C)"
                          ]
                          br []
-                         a [ Href (sprintf "https://sos-de-fra-1.exo.io/wooglife/%s.png" model.Lake.Value.Uuid)
+                         a [ Href (sprintf "https://sos-de-fra-1.exo.io/wooglife/%s.svg" model.Lake.Value.Uuid)
                              Id "water-history"
                              Style [ FontSize "1.3em" ] ] [
                              str "Historie"
