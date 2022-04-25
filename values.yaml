@@ -17,16 +17,20 @@ deployment:
     cpu: 300m
     memory: 50Mi
 
-service:
+service: &defaultservice
   name: preliminary-frontend
   port: 80
   targetPort: 80
   appSelector: preliminary-frontend
 
-ingress:
-  hosts:
-    - woog.life
-    - darmstadt.live
-  secret: tls-preliminary-frontend
-  issuer: letsencrypt-issuer-http
-  name: preliminary-frontend
+ingresses:
+  - hosts:
+      - name: woog.life
+    secret: tls-preliminary-frontend
+    issuer: letsencrypt-issuer-http
+    name: preliminary-frontend
+  - hosts:
+      - name: darmstadt.live
+    secret: tls-preliminary-frontend-live
+    issuer: letsencrypt-issuer
+    name: preliminary-frontend-live
