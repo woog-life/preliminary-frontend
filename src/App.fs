@@ -112,7 +112,7 @@ let update (msg: Msg) (model: Model) =
                   LakeLoadInit = true },
             Cmd.Empty
     | GetLake uuid ->
-        JsCookie.set "initial-lake-uuid; SameSite=Strict" uuid |> ignore
+        JsCookie.set "initial-lake-uuid" uuid |> ignore
 
         { model with
               LakeLoadInit = true
