@@ -25,7 +25,7 @@ RUN npm install \
     && npm run prod
 
 
-FROM nginx:1.21-alpine
+FROM nginx:1.22-alpine
 
 COPY --from=builder /app/public/ /usr/share/nginx/html
 
