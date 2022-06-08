@@ -15,14 +15,20 @@ RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup_17.x | bash -
 
 RUN apt-get install -y nodejs
 
-COPY . .
+COPY .fable/ .fable/
+COPY public/ public/
+COPY src/ src/
+COPY Nuget.Config .
+COPY package.json .
+COPY package-lock.json .
+COPY webpack.config.js .
 
 RUN sed -i -e "s#{{TAG}}#$GITHUBSHA#g" src/App.fs && \
     sed -i -e "s/|> Program.withConsoleTrace//g" src/App.fs && \
     sed -i -e "s#{{API_KEY}}#$OPENWEATHERMAP_APIKEY_RAW#g" src/App.fs
 
-RUN npm install \
-    && npm run prod
+RUN npm install && \
+    npm run prod
 
 
 FROM nginx:1.22-alpine
