@@ -15,7 +15,6 @@ RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup_18.x | bash -
 
 RUN apt-get install -y nodejs
 
-COPY .fable/ .fable/
 COPY public/ public/
 COPY src/ src/
 COPY Nuget.Config .
