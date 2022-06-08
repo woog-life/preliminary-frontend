@@ -11,7 +11,7 @@ WORKDIR /app
 # https://www.openssl.org/blog/blog/2021/09/07/OpenSSL3.Final/
 ENV NODE_OPTIONS="--openssl-legacy-provider"
 
-RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup_17.x | bash -
+RUN apt-get update -y && curl -sL https://deb.nodesource.com/setup_18.x | bash -
 
 RUN apt-get install -y nodejs
 
