@@ -22,7 +22,7 @@ type Msg =
     | GetLake of string
     | AddLake of Lake.RawType
     | AddEvents of Booking.RawType
-    | GetWeather
+    | GetWeather of string option
     | UpdateWeather of Weather.RawType option
     | GetLakes
     | AddLakes of RawType
@@ -58,12 +58,27 @@ let getEvents uuid dispatch =
         AddEvents res |> dispatch
     }
 
-let API_KEY = "{{API_KEY}}"
+let API_KEY =
+    "32d29bf54449752ec6604d8801f1c914"
 
-let getWeather dispatch =
+let UUID_CITY_MAP =
+    Map [ ("acf32f07-e702-4e9e-b766-fb8993a71b21", "Bern")
+          ("55e5f52a-2de8-458a-828f-3c043ef458d9", "Hamburg")
+          ("69c8438b-5aef-442f-a70d-e0d783ea2b38", "Darmstadt")
+//          ("d074654c-dedd-46c3-8042-af55c93c910e", "Cuxhaven")
+          ("bedbdac7-7d61-48d5-b1bd-0de5be25e953", "Potsdam")
+          ("ab337e4e-7673-4b5e-9c95-393f06f548c8", "Köln") ]
+
+let findCity uuid =
+    try
+        Some(UUID_CITY_MAP |> Map.find uuid)
+    with
+    | _ -> None
+
+let getWeather city dispatch =
     promise {
         let url =
-            sprintf "https://api.openweathermap.org/data/2.5/weather?q=Darmstadt&units=metric&appid=%s" API_KEY
+            sprintf "https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=%s" city API_KEY
 
         let! res = Fetch.tryGet url
 
@@ -94,10 +109,9 @@ let init () : Model * Cmd<Msg> =
       LakeLoadInit = false
       Weather = None
       Lakes = [] },
-    Cmd.ofSub
-        (fun dispatch ->
-            GetLakes |> dispatch
-            dispatch GetWeather)
+    Cmd.ofSub (fun dispatch ->
+        GetLakes |> dispatch
+        dispatch (GetWeather None))
 
 let update (msg: Msg) (model: Model) =
     match msg with
@@ -108,22 +122,28 @@ let update (msg: Msg) (model: Model) =
             model, Cmd.Empty
         else
             { model with
-                  InitialLoad = false
-                  LakeLoadInit = true },
+                InitialLoad = false
+                LakeLoadInit = true },
             Cmd.Empty
     | GetLake uuid ->
         JsCookie.set "initial-lake-uuid" uuid |> ignore
 
         { model with
-              LakeLoadInit = true
-              InitialLoad = false },
+            LakeLoadInit = true
+            InitialLoad = false },
         Cmd.ofSub (fun dispatch -> getLake uuid dispatch |> Promise.start)
-    | GetWeather -> model, Cmd.ofSub (fun dispatch -> getWeather dispatch |> Promise.start)
+    | GetWeather uuid ->
+        if uuid.IsSome then
+            match (findCity uuid.Value) with
+            | Some(city) -> model, Cmd.ofSub (fun dispatch -> getWeather city dispatch |> Promise.start)
+            | None -> { model with Weather = None }, Cmd.Empty
+        else
+            { model with Weather = None }, Cmd.Empty
     | AddLake lake ->
         { model with
-              Lake = Some(Lake.Into lake)
-              InitialLoad = false
-              LakeLoadInit = true },
+            Lake = Some(Lake.Into lake)
+            InitialLoad = false
+            LakeLoadInit = true },
         Cmd.ofSub (fun dispatch -> getEvents lake.id dispatch |> Promise.start)
     | AddEvents events ->
         if model.Lake.IsNone then
@@ -132,21 +152,19 @@ let update (msg: Msg) (model: Model) =
             let lake = model.Lake.Value
 
             let lake =
-                { lake with
-                      Events = (List.map Booking.Into events.events) }
+                { lake with Events = (List.map Booking.Into events.events) }
 
-            { model with Lake = Some(lake) }, Cmd.Empty
+            { model with Lake = Some(lake) }, Cmd.ofSub (fun dispatch -> GetWeather(Some(lake.Uuid)) |> dispatch)
     | UpdateWeather weather ->
         { model with
-              Weather =
-                  if weather.IsSome then
-                      Some(Weather.Into weather.Value)
-                  else
-                      None },
+            Weather =
+                if weather.IsSome then
+                    Some(Weather.Into weather.Value)
+                else
+                    None },
         Cmd.Empty
     | AddLakes lakes ->
-        { model with
-              Lakes = (List.map Into lakes.lakes) },
+        { model with Lakes = (List.map Into lakes.lakes) },
         if lakes.lakes.Length > 0 then
             let defaultUuid =
                 match findCookieValue "initial-lake-uuid" with
@@ -316,11 +334,7 @@ let displayLake model dispatch =
             (displayLakeChooser model.Lake model.Lakes dispatch)
             (match model.Weather with
              | Some weather ->
-                 if model.Lake.IsSome
-                    && List.contains
-                        model.Lake.Value.Uuid
-                        [ "69c8438b-5aef-442f-a70d-e0d783ea2b38"
-                          "25aa2968-e34e-4f86-87cc-56b16b5aff36" ] then
+                 if model.Lake.IsSome then
                      displaySun weather
                  else
                      span [] []
@@ -332,13 +346,12 @@ let displayLake model dispatch =
 
                  if List.contains Temperature lakeInfo.Features then
                      span [] [
-                         span [
-                             Id "water-temperature-header"
-                             Style [ FontSize "2em" ] ] [
+                         span [ Id "water-temperature-header"
+                                Style [ FontSize "2em" ] ] [
                              str "Wasser (°C)"
                          ]
                          br []
-                         a [ Href (sprintf "https://sos-de-fra-1.exo.io/wooglife/%s.svg" model.Lake.Value.Uuid)
+                         a [ Href(sprintf "https://sos-de-fra-1.exo.io/wooglife/%s.svg" model.Lake.Value.Uuid)
                              Id "water-history"
                              Style [ FontSize "1.3em" ] ] [
                              str "Historie"
