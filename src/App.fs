@@ -65,7 +65,7 @@ let UUID_CITY_MAP =
     Map [ ("acf32f07-e702-4e9e-b766-fb8993a71b21", "Bern")
           ("55e5f52a-2de8-458a-828f-3c043ef458d9", "Hamburg")
           ("69c8438b-5aef-442f-a70d-e0d783ea2b38", "Darmstadt")
-//          ("d074654c-dedd-46c3-8042-af55c93c910e", "Cuxhaven")
+          ("d074654c-dedd-46c3-8042-af55c93c910e", "Cuxhaven")
           ("bedbdac7-7d61-48d5-b1bd-0de5be25e953", "Potsdam")
           ("ab337e4e-7673-4b5e-9c95-393f06f548c8", "Köln") ]
 
