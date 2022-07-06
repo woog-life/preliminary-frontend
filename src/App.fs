@@ -59,7 +59,7 @@ let getEvents uuid dispatch =
     }
 
 let API_KEY =
-    "32d29bf54449752ec6604d8801f1c914"
+    "{{API_KEY}}"
 
 let UUID_CITY_MAP =
     Map [ ("acf32f07-e702-4e9e-b766-fb8993a71b21", "Bern")
