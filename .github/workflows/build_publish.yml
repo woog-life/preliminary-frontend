@@ -32,7 +32,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the tagged Docker image
-        run: docker build --build-arg GITHUBSHA=${GITHUB_SHA} --build-arg OPENWEATHERMAP_APIKEY_RAW=${{ secrets.OPENWEATHERMAP_APIKEY_RAW }} -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
+        run: docker build --build-arg GITHUBSHA=${GITHUB_SHA} -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
       - name: Push the tagged Docker image
         run: docker push ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA}
 
@@ -41,9 +41,9 @@ jobs:
     needs: build_push_docker
     steps:
       - uses: actions/checkout@v3
-      - name: update tag in manifest.yml
-        run: sed -i -e "s#__TAG__#${GITHUB_SHA}#g" values.yaml
+      - run: sed -i -e "s#__TAG__#${GITHUB_SHA}#g" values.yaml
+      - run: sed -i -e "s#__OPEN_WEATHER_MAP_KEY__#${{ secrets.OPENWEATHERMAP_APIKEY_RAW }}#g" values.yaml
       - uses: WyriHaximus/github-action-helm3@v2
-        with: 
+        with:
           exec: helm upgrade preliminary-frontend . --install --namespace=wooglife --atomic
           kubeconfig: ${{ secrets.KUBECONFIG_RAW }}

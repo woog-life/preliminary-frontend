@@ -27,6 +27,9 @@ spec:
         - containerPort: {{ $port }}
           protocol: TCP
         {{- end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.secret.name }}
         resources:
           requests:
             cpu: {{ .Values.deployment.requests.cpu }}

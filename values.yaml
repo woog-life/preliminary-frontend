@@ -17,11 +17,15 @@ deployment:
     cpu: 300m
     memory: 50Mi
 
-service: &defaultservice
+service:
   name: preliminary-frontend
   port: 80
   targetPort: 80
   appSelector: preliminary-frontend
+
+secret:
+  name: openweathermapkey
+  openWeatherMapKey: __OPEN_WEATHER_MAP_KEY__
 
 ingresses:
   - hosts:
