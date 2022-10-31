@@ -1,0 +1,45 @@
+{{- range $i, $v := .Values.ingresses }}
+{{- with $v }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name }}
+  namespace: {{ default $.Release.Namespace (default $.Values.namespace .namespace) }}
+  annotations:
+    {{- if not .disableDefaultAnnotations }}
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/issue-temporary-certificate: "false"
+      cert-manager.io/cluster-issuer: {{ default "letsencrypt-issuer" .issuer }}
+    {{- end }}
+    {{- if .customAnnotations }}
+    {{ .customAnnotations | toYaml | nindent 4 }}
+    {{- end }}
+spec:
+  tls:
+    - secretName: {{ .secret }}
+      hosts:
+      {{- range $host := .hosts }}
+      - {{ $host.name }}
+      {{- end }}
+  rules:
+  {{- range $host := .hosts }}
+  {{ with $host }}
+  - host: {{ .name }}
+    http:
+      paths:
+      - path: {{ default "/" .path }}
+        pathType: {{ default "Prefix" .prefix }}
+        backend:
+          service:
+            {{ $service := $.Values.service }}
+            {{- with $service }}
+            name: {{ default "http" .name }}
+            port:
+              number: {{ .port }}
+            {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>&#176;C TODO</title>
+    <link rel="stylesheet" href="/css/main.css" media="screen">
+</head>
+<body>
+<div id="container">
+    <form>
+        <!--suppress HtmlFormInputWithoutLabel -->
+        <select id="lake-dropdown">
+            <%- lakes.each do |lake| -%>
+            <option value="<%= lake.path_name() %>"><%= lake.html_name() %></option>
+            <%- end -%>
+        </select>
+    </form>
+<!--    <div class="grid-item mb-4" style="font-size: 2em;">-->
+<!--        <p class="grid-item" id="sun-information-header">Sonne</p>-->
+<!--        <div>-->
+<!--            <span id="sunrise" title="sunrise"></span>-->
+<!--            - -->
+<!--            <span id="sunset" title="sunset"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="grid-item" style="">
+        <span id="water-temperature-header">Wasser (&#176;C)</span><br>
+        <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>.svg"
+           id="water-history" title="history">History</a>
+        <p id="data-updated-time">
+            <%= current_lake.formatted_time() %>
+        </p>
+        <p id="lake-water-temperature">
+            <%= current_lake.data.preciseTemperature %>&#176;
+        </p>
+    </div>
+</div>
+
+<script>
+addEventListener("change", (_) => {
+    const e_select = document.getElementById("lake-dropdown");
+    const uuid =e_select.options[e_select.selectedIndex].value;
+
+    window.location.pathname = "/" + uuid;
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+@font-face {
+    font-family: "Chawp";
+    /*noinspection CssUnknownTarget*/
+    src: url('/fonts/chawp.ttf');
+}
+
+html,
+body {
+    margin: 10px 0 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Chawp, serif;
+    font-weight: bold;
+    color: #fff;
+}
+
+a:visited, a:hover {
+    color: #fff;
+}
+
+body {
+    /*noinspection CssUnknownTarget*/
+    background-image: url('/images/background.webp');
+    background-position: center center;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    text-align: center;
+    margin-top: 50px;
+}
+
+#container {
+    grid-gap: 10px 0;
+    place-self: center;
+    place-content: center;
+    place-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+#container > div {
+    margin-top: 10px;
+}
+
+#lake-water-temperature {
+    font-size: 12em;
+    margin-top: 10px;
+}
+
+.grid-item {
+    display: grid;
+}
+
+#lake-dropdown {
+    border-radius: 255px 25px 225px 25px/25px 225px 25px 255px;
+    background-color: #555;
+    border-color: #555;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.75rem .75rem .375rem;
+    text-align: center;
+    font-family: Chawp, serif;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+#water-history {
+    margin-top: 10px;
+    font-size: 1.3em;
+}
+
+#data-updated-time,
+#water-temperature-header {
+    font-size: 2em;
+}

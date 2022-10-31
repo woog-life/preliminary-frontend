@@ -1,0 +1,17 @@
+name: frontend
+version: 0.1.0
+
+authors:
+  - Torben Carstens <git@carstens.tech>
+
+targets:
+  frontend:
+    main: src/frontend.cr
+
+crystal: 1.5.1
+
+license: MIT
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
