@@ -34,5 +34,3 @@ RUN npm install && \
 FROM nginx:1.23-alpine
 
 COPY --from=builder /app/public/ /usr/share/nginx/html
-
-EXPOSE 80
