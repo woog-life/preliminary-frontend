@@ -51,7 +51,7 @@ let getLake uuid dispatch =
         let language = (unwrapOr (findCookieValue "language") (Seq.head ((unwrapOr navigator.language "en-US").Split '-')))
 
         let url =
-            sprintf "https://api.woog.life/lake/%s/temperature?precision=%d&formatRegion=%s" uuid PRECISION (language.ToUpper())
+            sprintf "https://api.woog.life/lake/%s?precision=%d&formatRegion=%s" uuid PRECISION (language.ToUpper())
 
         let! res = Fetch.get url
 
