@@ -15,6 +15,6 @@
       <PackageReference Include="Thoth.Fetch" Version="2.0.0" />
       <PackageReference Include="Fable.Browser.Navigator" Version="1.0.0" />
       <PackageReference Include="Fable.Import.Js-Cookie" Version="1.0.0" />
-      <PackageReference Include="Thoth.Json" Version="4.1.0" />
+      <PackageReference Include="Thoth.Json" Version="8.0.0" />
   </ItemGroup>
 </Project>
