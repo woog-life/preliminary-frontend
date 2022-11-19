@@ -67,7 +67,8 @@ let UUID_CITY_MAP =
           ("69c8438b-5aef-442f-a70d-e0d783ea2b38", "Darmstadt")
           ("d074654c-dedd-46c3-8042-af55c93c910e", "Cuxhaven")
           ("bedbdac7-7d61-48d5-b1bd-0de5be25e953", "Potsdam")
-          ("ab337e4e-7673-4b5e-9c95-393f06f548c8", "Köln") ]
+          ("ab337e4e-7673-4b5e-9c95-393f06f548c8", "Köln")
+          ("ab6fbeb2-be73-4223-8f04-425929339838", "Gent") ]
 
 let findCity uuid =
     try
