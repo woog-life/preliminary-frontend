@@ -27,7 +27,7 @@ RUN sed -i -e "s#{{TAG}}#$GITHUBSHA#g" src/App.fs && \
     sed -i -e "s#{{API_KEY}}#$OPENWEATHERMAP_APIKEY_RAW#g" src/App.fs
 
 RUN npm install && \
-    npx browserslist@latest --update-db \
+    npx browserslist@latest --update-db && \
     npm run prod
 
 
