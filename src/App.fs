@@ -29,10 +29,29 @@ type Msg =
 
 let PRECISION = 1
 
+let unwrapMapOr (opt: 'b option) (m: 'b -> 't) (def: 't) = if opt.IsSome then m opt.Value else def
+
+let unwrapOr (opt: 'b option) (def: 'b) : 'b = unwrapMapOr opt id def
+
+let findCookieValue (name: string) : string option =
+    let kvArrToPair (kvArr: string []) : string * string =
+        match kvArr with
+        | [| k; v |] -> (k, v)
+        | _ -> ("", "")
+
+    let rawCookies: string = Dom.document.cookie
+
+    rawCookies.Split ';'
+    |> Array.map (fun (s: string) -> s.Trim().Split '=' |> kvArrToPair)
+    |> Map.ofArray
+    |> Map.tryFind name
+
 let getLake uuid dispatch =
     promise {
+        let language = (unwrapOr (findCookieValue "language") (Seq.head ((unwrapOr navigator.language "en-US").Split '-')))
+
         let url =
-            sprintf "https://api.woog.life/lake/%s?precision=%d" uuid PRECISION
+            sprintf "https://api.woog.life/lake/%s/temperature?precision=%d&formatRegion=%s" uuid PRECISION (language.ToUpper())
 
         let! res = Fetch.get url
 
@@ -90,19 +109,6 @@ let getWeather city dispatch =
 
         UpdateWeather weather |> dispatch
     }
-
-let findCookieValue (name: string) : string option =
-    let kvArrToPair (kvArr: string []) : string * string =
-        match kvArr with
-        | [| k; v |] -> (k, v)
-        | _ -> ("", "")
-
-    let rawCookies: string = Dom.document.cookie
-
-    rawCookies.Split ';'
-    |> Array.map (fun (s: string) -> s.Trim().Split '=' |> kvArrToPair)
-    |> Map.ofArray
-    |> Map.tryFind name
 
 let init () : Model * Cmd<Msg> =
     { InitialLoad = true
