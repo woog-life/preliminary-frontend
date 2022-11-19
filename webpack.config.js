@@ -9,17 +9,17 @@ const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     entry: {
-        bundle: "./src/App.fsproj",
-        styles: ["./public/main.css", "./public/bootstrap.css"],
+        bundle: "/app/src/App.fsproj",
+        styles: ["/app/public/main.css", "/app/public/bootstrap.css"],
     },
     output: {
-        path: path.join(__dirname, "./public"),
+        path: path.join(__dirname, "/app/public"),
         filename: "[name].js",
     },
     devServer: {
-        contentBase: "./public",
+        contentBase: "/app/public",
         host: '0.0.0.0',
         port: 8080,
         disableHostCheck: true
