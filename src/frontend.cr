@@ -5,7 +5,11 @@ require "./api/lake.cr"
 module Frontend
   VERSION = "0.1.0"
 
-  get "/" do
+  error 404 do |env|
+    env.redirect "/"
+  end
+
+  get "/" do |env|
     # TODO: read cookie
     "<html><head><title>Hello World!</title><link rel=\"stylesheet\" href=\"/css/main.css\" media=\"screen\"><head></html>"
   end
