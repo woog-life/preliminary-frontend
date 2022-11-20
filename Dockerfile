@@ -1,4 +1,4 @@
-FROM crystallang/crystal:1.6.1-alpine AS builder
+FROM crystallang/crystal:1.6.2-alpine AS builder
 
 RUN apk update && \
     apk add ca-certificates && \
@@ -15,7 +15,7 @@ COPY src/ src/
 
 RUN shards build --static --no-debug --release --production --warnings=all
 
-FROM alpine:3.16.2
+FROM alpine:3.16.3
 
 RUN apk update && \
     apk add --update tzdata && \
