@@ -1,6 +1,7 @@
 require "kemal"
 require "./models/lake.cr"
 require "./api/lake.cr"
+require "./helper.cr"
 
 module Frontend
   VERSION = "0.1.0"
@@ -17,7 +18,10 @@ module Frontend
   get "/:uuid" do |env|
     response = get_lakes()
     lakes = response.lakes
-    current_lake = get_lake(env.params.url["uuid"])
+
+    precision = 2
+    formatRegion = get_country_code_from_header(env.request.headers["Accept-Language"])
+    current_lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
 
     render "src/views/lake.ecr"
   end
