@@ -25,12 +25,24 @@ def get_lakes()
 end
 
 
-def get_lake(uuid : String, precision = 1)
-  response = HTTP::Client.get "https://api.woog.life/lake/#{uuid}?precision=#{precision}"
+def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = "US")
+  response = HTTP::Client.get "https://api.woog.life/lake/#{uuid}"
+  if response.status_code == 200
+    api_lake = ApiLake.from_json(response.body)
+    get_lake(api_lake, precision, formatRegion)
+  else
+    raise ApiException.new("failed to get lake for #{uuid}")
+  end
+end
+
+
+def get_lake(lake : ApiLake, precision = 1, formatRegion = "US")
+  response = HTTP::Client.get "https://api.woog.life/lake/#{lake.id}/temperature?precision=#{precision}&formatRegion=#{formatRegion}"
 
   if response.status_code == 200
-    Lake.from_json(response.body)
+    data = LakeData.from_json(response.body)
+    Lake.new(lake.id, lake.name, data)
   else
-    raise ApiException.new("failed to get lake information")
+    raise ApiException.new("failed to get lake data")
   end
 end

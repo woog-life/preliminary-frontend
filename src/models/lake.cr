@@ -29,6 +29,13 @@ struct LakeData
   property preciseTemperature : String
 end
 
+struct ApiLake
+  include JSON::Serializable
+
+  property id : String
+  property name : String
+end
+
 struct Lake
   include JSON::Serializable
 
@@ -36,10 +43,22 @@ struct Lake
   property name : String
   property data : LakeData
 
+  def initialize(@id : String, @name : String, @data : LakeData)
+  end
+
   def formatted_time()
     t = Time::Format::ISO_8601_DATE_TIME.parse(@data.time, Time::Location.load("Europe/Berlin"))
 
     t.to_s "%H:%M %d.%m.%Y"
+  end
+
+  def html_name()
+    name = HTML.escape @name
+    HTML_REPLACEMENTS.each do |key, value|
+      name = name.gsub(key, value)
+    end
+
+    name
   end
 end
 
