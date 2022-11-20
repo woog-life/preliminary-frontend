@@ -48,7 +48,7 @@ let findCookieValue (name: string) : string option =
 
 let getLake uuid dispatch =
     promise {
-        let language = (unwrapOr (findCookieValue "language") (Seq.head ((unwrapOr navigator.language "en-US").Split '-')))
+        let language = (unwrapOr (findCookieValue "language") (Seq.item 1 ((unwrapOr navigator.language "en-US").Split '-')))
 
         let url =
             sprintf "https://api.woog.life/lake/%s?precision=%d&formatRegion=%s" uuid PRECISION (language.ToUpper())
