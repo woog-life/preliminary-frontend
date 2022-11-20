@@ -2,6 +2,8 @@ require "http/client"
 require "json"
 require "../models/lake.cr"
 
+ENV["API_URL"] ||= "https://api.woog.life"
+
 class ApiException < Exception
 end
 
@@ -15,7 +17,7 @@ struct Response
 end
 
 def get_lakes()
-  response = HTTP::Client.get "https://api.woog.life/lake"
+  response = HTTP::Client.get "#{ENV["API_URL"]}/lake"
 
   if response.status_code == 200
     Response.from_json(response.body)
@@ -26,7 +28,7 @@ end
 
 
 def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = "US")
-  response = HTTP::Client.get "https://api.woog.life/lake/#{uuid}"
+  response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}"
   if response.status_code == 200
     api_lake = ApiLake.from_json(response.body)
     get_lake(api_lake, precision, formatRegion)
@@ -37,7 +39,7 @@ end
 
 
 def get_lake(lake : ApiLake, precision = 1, formatRegion = "US")
-  response = HTTP::Client.get "https://api.woog.life/lake/#{lake.id}/temperature?precision=#{precision}&formatRegion=#{formatRegion}"
+  response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{lake.id}/temperature?precision=#{precision}&formatRegion=#{formatRegion}"
 
   if response.status_code == 200
     data = LakeData.from_json(response.body)

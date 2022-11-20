@@ -32,7 +32,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the tagged Docker image
-        run: docker build --build-arg GITHUBSHA=${GITHUB_SHA} -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
+        run: docker build -t ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA} .
       - name: Push the tagged Docker image
         run: docker push ghcr.io/woog-life/preliminary-frontend:${GITHUB_SHA}
 
