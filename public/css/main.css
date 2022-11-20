@@ -68,7 +68,7 @@ body {
     margin-bottom: 10px;
 }
 
-#water-history {
+#water-history, #data-updated-time {
     margin-top: 10px;
     font-size: 1.3em;
 }
