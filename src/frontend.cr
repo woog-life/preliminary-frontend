@@ -11,7 +11,7 @@ module Frontend
 
   get "/" do |env|
     # TODO: read cookie
-    "<html><head><title>Hello World!</title><link rel=\"stylesheet\" href=\"/css/main.css\" media=\"screen\"><head></html>"
+    env.redirect "/69c8438b-5aef-442f-a70d-e0d783ea2b38"
   end
 
   get "/:uuid" do |env|
