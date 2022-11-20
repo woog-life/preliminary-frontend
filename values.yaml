@@ -31,7 +31,7 @@ ingresses:
   - hosts:
       - name: woog.life
     secret: tls-preliminary-frontend
-    issuer: letsencrypt-issuer-http
+    issuer: letsencrypt-born
     name: preliminary-frontend
   - hosts:
       - name: darmstadt.live
