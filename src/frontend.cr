@@ -11,8 +11,12 @@ module Frontend
   end
 
   get "/" do |env|
+    uuid = "69c8438b-5aef-442f-a70d-e0d783ea2b38"
+    if initial_uuid_cookie = env.request.cookies["initial-lake-uuid"]?
+      uuid = initial_uuid_cookie.value
+    end
     # TODO: read cookie
-    env.redirect "/69c8438b-5aef-442f-a70d-e0d783ea2b38"
+    env.redirect "/#{uuid}"
   end
 
   # TODO: accept query params precision and formatRegion
@@ -25,6 +29,7 @@ module Frontend
     formatRegion = get_country_code_from_header(env.request.headers["Accept-Language"])
     current_lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
 
+    env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
     render "src/views/lake.ecr"
   end
 

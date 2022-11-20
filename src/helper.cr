@@ -12,3 +12,17 @@ def get_country_code_from_header(accept_language_value : String)
     "US"
   end
 end
+
+def generate_cookie(name : String, value : String)
+  HTTP::Cookie.new(
+    name: name,
+    value: value,
+    secure: true,
+    samesite: HTTP::Cookie::SameSite::Strict,
+    http_only: true
+  )
+end
+
+def initial_lake_uuid_cookie(uuid : String)
+  generate_cookie("initial-lake-uuid", uuid)
+end
