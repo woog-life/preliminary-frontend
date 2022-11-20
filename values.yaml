@@ -12,10 +12,10 @@ deployment:
     app: preliminary-frontend
   requests:
     cpu: 50m
-    memory: 10Mi
+    memory: 30Mi
   limit:
     cpu: 300m
-    memory: 50Mi
+    memory: 100Mi
 
 service:
   name: preliminary-frontend
