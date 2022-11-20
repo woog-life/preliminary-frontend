@@ -15,7 +15,9 @@ module Frontend
     env.redirect "/69c8438b-5aef-442f-a70d-e0d783ea2b38"
   end
 
+  # TODO: accept query params precision and formatRegion
   get "/:uuid" do |env|
+    # TODO: cache lakes
     response = get_lakes()
     lakes = response.lakes
 
