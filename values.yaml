@@ -23,6 +23,10 @@ service:
   targetPort: 80
   appSelector: preliminary-frontend
 
+configmap:
+  name: preliminary-frontend
+  apiUrl: http://backend
+
 secret:
   name: openweathermapkey
   openWeatherMapKey: __OPEN_WEATHER_MAP_KEY__
