@@ -22,12 +22,12 @@ module Frontend
   # TODO: accept query params precision and formatRegion
   get "/:uuid" do |env|
     # TODO: cache lakes
-    response = get_lakes()
-    lakes = response.lakes
+    response : Response = get_lakes()
+    lakes : Array(LakeItem) = response.lakes
 
     precision = 2
-    formatRegion = get_country_code_from_header(env.request.headers["Accept-Language"]?)
-    current_lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
+    formatRegion : String? = get_country_code_from_header(env.request.headers["Accept-Language"]?)
+    current_lake : Lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
 
     env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
     render "src/views/lake.ecr"

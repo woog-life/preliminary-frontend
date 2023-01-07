@@ -16,7 +16,7 @@ struct Response
   end
 end
 
-def get_lakes()
+def get_lakes() : Response
   response = HTTP::Client.get "#{ENV["API_URL"]}/lake"
 
   if response.status_code == 200
@@ -27,7 +27,7 @@ def get_lakes()
 end
 
 
-def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = nil)
+def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = nil) : Lake
   response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}"
   if response.status_code == 200
     api_lake = ApiLake.from_json(response.body)
@@ -38,7 +38,7 @@ def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = nil)
 end
 
 
-def get_lake(lake : ApiLake, precision = 1, formatRegion = nil)
+def get_lake(lake : ApiLake, precision = 1, formatRegion = nil) : Lake
   url = "#{ENV["API_URL"]}/lake/#{lake.id}/temperature?precision=#{precision}"
   if formatRegion != nil
     url = url + "&formatRegion=#{formatRegion}"
