@@ -42,4 +42,6 @@ RUN chmod -R o+w /usr/app
 
 USER 1001
 
+ENV KEMAL_ENV production
+
 ENTRYPOINT ["/usr/app/frontend"]
