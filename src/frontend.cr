@@ -26,7 +26,7 @@ module Frontend
     lakes = response.lakes
 
     precision = 2
-    formatRegion = get_country_code_from_header(env.request.headers["Accept-Language"])
+    formatRegion = get_country_code_from_header(env.request.headers["Accept-Language"]?)
     current_lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
 
     env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])

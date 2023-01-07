@@ -27,7 +27,7 @@ def get_lakes()
 end
 
 
-def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = "US")
+def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = nil)
   response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}"
   if response.status_code == 200
     api_lake = ApiLake.from_json(response.body)
@@ -38,8 +38,12 @@ def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = "US")
 end
 
 
-def get_lake(lake : ApiLake, precision = 1, formatRegion = "US")
-  response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{lake.id}/temperature?precision=#{precision}&formatRegion=#{formatRegion}"
+def get_lake(lake : ApiLake, precision = 1, formatRegion = nil)
+  url = "#{ENV["API_URL"]}/lake/#{lake.id}/temperature?precision=#{precision}"
+  if formatRegion != nil
+    url = url + "&formatRegion=#{formatRegion}"
+  end
+  response = HTTP::Client.get url
 
   if response.status_code == 200
     data = LakeData.from_json(response.body)
