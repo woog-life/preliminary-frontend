@@ -26,10 +26,15 @@ module Frontend
 
     precision = 2
     formatRegion : String? = get_country_code_from_header(env.request.headers["Accept-Language"]?)
-    current_lake : Lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
 
-    env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
-    render "src/views/lake.ecr"
+    begin
+      get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion).try { |current_lake |
+        env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
+        render "src/views/lake.ecr"
+      }
+    rescue ex : ApiException
+      render "src/views/lake_error.ecr"
+    end
   end
 
   static_headers do |response, filepath, filestat|
