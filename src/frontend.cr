@@ -15,7 +15,6 @@ module Frontend
     if initial_uuid_cookie = env.request.cookies["initial-lake-uuid"]?
       uuid = initial_uuid_cookie.value
     end
-    # TODO: read cookie
     env.redirect "/#{uuid}"
   end
 
