@@ -47,7 +47,8 @@ struct Lake
   end
 
   def formatted_time()
-    t = Time::Format::ISO_8601_DATE_TIME.parse(@data.time, Time::Location.load("Europe/Berlin"))
+    t = Time::Format::ISO_8601_DATE_TIME.parse(@data.time)
+    t = t.in Time::Location.load("Europe/Berlin")
 
     t.to_s "%H:%M %d.%m.%Y"
   end
