@@ -15,7 +15,7 @@ COPY src/ src/
 
 RUN shards build --static --no-debug --release --production --warnings=all
 
-FROM alpine:3.17.3
+FROM alpine:3.18.0
 
 RUN apk update && \
     apk add --update tzdata && \
