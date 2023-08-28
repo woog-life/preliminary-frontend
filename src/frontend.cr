@@ -3,6 +3,15 @@ require "./models/lake.cr"
 require "./api/lake.cr"
 require "./helper.cr"
 
+def uuid_has_feature(lakes : Array(LakeItem), uuid : String, feature : String)
+  lake : LakeItem | Nil = lakes.find { |lake| lake.id == uuid }
+  if lake
+    lake.has_feature feature
+  else
+    false
+  end
+end
+
 module Frontend
   VERSION = "0.1.0"
 
@@ -21,19 +30,43 @@ module Frontend
   # TODO: accept query params precision and formatRegion
   get "/:uuid" do |env|
     # TODO: cache lakes
-    response : Response = get_lakes()
-    lakes : Array(LakeItem) = response.lakes
+    lakesChannel = Channel(Array(LakeItem)).new
+    tidesChannel = Channel(Array(Tide)).new
+
+    spawn do
+      response : Response = get_lakes()
+      lakes : Array(LakeItem) = response.lakes
+      lakesChannel.send(lakes)
+    end
 
     precision = 2
     formatRegion : String? = get_country_code_from_header(env.request.headers["Accept-Language"]?)
 
-    at = ""
-    upcomingLimit = 4
+    tides = [] of Tide
 
     begin
-      tides : Array(Tide) = get_tides_by_uuid(env.params.url["uuid"], at, upcomingLimit)
-      get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion).try { |current_lake|
+      lakeChannel = Channel(Lake).new
+      spawn do
+        lake : Lake = get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion)
+        lakeChannel.send(lake)
+      end
+
+      lakes = lakesChannel.receive
+      hasTides = uuid_has_feature(lakes, env.params.url["uuid"], "tides")
+      if hasTides
+        spawn do
+          tides = get_tides_by_uuid(env.params.url["uuid"])
+          tidesChannel.send(tides)
+        end
+      end
+
+      lakeChannel.receive.try { |current_lake|
         env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
+
+        if hasTides
+          tides = tidesChannel.receive
+        end
+
         render "src/views/lake.ecr"
       }
     rescue ex : ApiException

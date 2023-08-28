@@ -103,15 +103,12 @@ struct LakeItem
     name
   end
 
+  def has_feature(feature : String)
+    found = @features.index feature
+    !found.nil?
+  end
+
   def path_name()
-    # name = HTML.escape(@name.gsub(/(\s)/) {
-    #   "_"
-    # })
-    # PATH_REPLACEMENTS.each do |key, value|
-    #   name = name.gsub(key, value)
-    # end
-    #
-    # name.downcase()
     @id
   end
 end

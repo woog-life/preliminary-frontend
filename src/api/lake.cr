@@ -27,7 +27,7 @@ def get_lakes() : Response
 end
 
 
-def get_tides_by_uuid(uuid : String, at : String, upcomingLimit : Int) : Array(Tide)
+def get_tides_by_uuid(uuid : String) : Array(Tide)
     response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}/tides"
   if response.status_code == 200
     api_lake = ApiTides.from_json(response.body)
