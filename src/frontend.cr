@@ -27,8 +27,12 @@ module Frontend
     precision = 2
     formatRegion : String? = get_country_code_from_header(env.request.headers["Accept-Language"]?)
 
+    at = ""
+    upcomingLimit = 4
+
     begin
-      get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion).try { |current_lake |
+      tides : Array(Tide) = get_tides_by_uuid(env.params.url["uuid"], at, upcomingLimit)
+      get_lake_by_uuid(env.params.url["uuid"], precision, formatRegion).try { |current_lake|
         env.response.cookies << initial_lake_uuid_cookie(env.params.url["uuid"])
         render "src/views/lake.ecr"
       }

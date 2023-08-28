@@ -27,6 +27,17 @@ def get_lakes() : Response
 end
 
 
+def get_tides_by_uuid(uuid : String, at : String, upcomingLimit : Int) : Array(Tide)
+    response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}/tides"
+  if response.status_code == 200
+    api_lake = ApiTides.from_json(response.body)
+    api_lake.extrema
+  else
+    raise ApiException.new("failed to get lake for #{uuid}")
+  end
+end
+
+
 def get_lake_by_uuid(uuid : String, precision = 1, formatRegion = nil) : Lake
   response = HTTP::Client.get "#{ENV["API_URL"]}/lake/#{uuid}"
   if response.status_code == 200

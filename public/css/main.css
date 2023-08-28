@@ -48,6 +48,7 @@ body {
 #lake-water-temperature {
     font-size: 12em;
     margin-top: 10px;
+    margin-bottom: 0;
 }
 
 .grid-item {
@@ -76,4 +77,24 @@ body {
 #data-updated-time,
 #water-temperature-header {
     font-size: 2em;
+}
+
+.tide-time,
+.tide-height,
+.tide-info {
+    font-size: 2em;
+}
+
+.tide-info {
+    text-align: left;
+}
+
+.tide-time {
+    padding-left: 30px;
+}
+
+#lake-tides {
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
 }

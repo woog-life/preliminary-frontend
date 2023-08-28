@@ -36,6 +36,27 @@ struct ApiLake
   property name : String
 end
 
+struct Tide
+  include JSON::Serializable
+
+  property time : String
+  property height : String
+  property isHighTide : Bool
+
+  def formatted_time()
+    t = Time::Format::ISO_8601_DATE_TIME.parse(@time)
+    t = t.in Time::Location.load("Europe/Berlin")
+
+    t.to_s "%H:%M %d.%m"
+  end
+end
+
+struct ApiTides
+  include JSON::Serializable
+
+  property extrema : Array(Tide)
+end
+
 struct Lake
   include JSON::Serializable
 
