@@ -16,7 +16,7 @@ def get_country_code_from_header(accept_language_value : String?) : String?
   language_tag = /#{primary_subtag}(?:-#{subtag})?/i
   language_range = /(?<language_range>#{language_tag}|\*)/i
   qvalue = /(?<quality>0(?:\.[0-9]{1,3})?|1(?:\.0{1,3})?)/
-  obs_language_q = /(?:#{language_range}(?: ?; ?q ?=#{qvalue})?)/
+  obs_language_q = /^(?:#{language_range}(?: ?; ?q ?=#{qvalue})?)$/
 
   # the actual obs_accept_language regex is the following:
   # obs_accept_language = / ?#{obs_language_q}(, ?#{obs_language_q})* ?/
