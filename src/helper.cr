@@ -37,7 +37,14 @@ def get_country_code_from_header(accept_language_value : String?) : String?
         quality = value["quality"].to_f?
       rescue KeyError
       end
-      if quality.nil?
+
+      # "The default value is q=1."
+      # see https://www.rfc-editor.org/rfc/rfc2616#section-14.1
+      # "If no Q values are given, the language-ranges are given in priority order,
+      #  with the leftmost language-range being the most preferred language"
+      # see https://www.rfc-editor.org/rfc/rfc3282#section-3
+      # thus we can immediately return after seeing a language with no quality or q=1
+      if quality.nil? || quality == 1.0
         begin
           subtag = value["subtag"]
           break
@@ -53,12 +60,11 @@ def get_country_code_from_header(accept_language_value : String?) : String?
             subtag = value["subtag"]
             highest_q_value = quality
           rescue KeyError
-          # process rest of the list
+            # process rest of the list
+            next
           end
         end
       end
-    else
-      nil
     end
   end
 
