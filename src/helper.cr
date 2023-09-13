@@ -11,6 +11,33 @@ def get_country_code_from_header(accept_language_value : String?) : String?
   # https://www.rfc-editor.org/rfc/rfc3066 (Tags for the Identification of Languages)
   # note that while rfc3066 is obsoleted by rfc4646 + rfc4647 this is not reflected in RFC3282 (which isn't obsoleted)
   # thus we're using the definition from rfc3066
+  # furthermore the new RFCs aren't using q-values anymore but a simple ordering:
+  #  "The various matching operations described in this document include
+  #   considerations for using a language priority list.  This document
+  #   does not define the syntax for a language priority list; defining
+  #   such a syntax is the responsibility of the protocol, application, or
+  #   specification that uses it.  When given as examples in this document,
+  #   language priority lists will be shown as a quoted sequence of ranges
+  #   separated by commas, like this: "en, fr, zh-Hant" (which is read
+  #   "English before French before Chinese as written in the Traditional
+  #   script")."
+  # in practice, q-values are still very much in use, since we're defaulting to a left-to-right priority in any case
+  # (if no qvalues are given), we're somewhat compliant with the new priority list (not with the new definitions though)
+  # while I'm not gonna implement the new specification, I've prepared the relevant regex definitions here:
+  # alpha = /[a-z]/i
+  # digit = /[0-9]/
+  # alphanum = /([0-9a-z])/
+  # script = /(?<script>#{alpha}{4})/
+  # region = /(?<region>#{alpha}{2}|#{digit}{3)/
+  # variant = /(?<variant>#{alphanum}{5,8}|(?:#{digit}#{alphanum}{3})?)/
+  # singleton = /(?<singleton>[a-wy-z0-9])/i
+  # extension = /(?<extension>#{singleton}(?:-(?:#{alphanum}{2,8)){1,}/i
+  # privateuse = "(?<privateuse>(?:x|X)(?:-#{alphanum}{1,8}){1,})"
+  # extlang = /(?<extlang>-#{alpha}}{3}){,3}/
+  # language = /(?<language>#{alpha}{2,3}(#{extlang})?|#{alpha}{4}|#{alpha}{5,8})/
+  # langtag = "(?<langtag>#{language}(?:-#{script})(?:-#{region})?(?:-#{variant})?(?:-#{extension})?(?:-#{privateuse})?)"
+  # language_tag = "(?<language_tag>#{langtag}|#{privateuse}|#{grandfathered})"
+
   primary_subtag = /(?<primary>[a-z]{1,8})/i
   subtag = /(?<subtag>[a-z0-9]{1,8})/i
   language_tag = /#{primary_subtag}(?:-#{subtag})?/i
