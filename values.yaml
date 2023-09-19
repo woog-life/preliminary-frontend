@@ -15,7 +15,7 @@ deployment:
     memory: 30Mi
   limit:
     cpu: 300m
-    memory: 100Mi
+    memory: 200Mi
 
 service:
   name: preliminary-frontend
