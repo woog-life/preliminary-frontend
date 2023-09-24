@@ -1,4 +1,6 @@
-# frontend
+# preliminary-frontend
+
+frontend for [woog-api](https://api.woog.life)
 
 ## Installation
 
@@ -16,4 +18,4 @@ $ crystal run src/frontend.cr
 
 ## Development
 
-- [Torben Carstens](https://github.com/your-github-user) - creator and maintainer
+- [Torben Carstens](https://github.com/torbencarstens) - creator and maintainer
