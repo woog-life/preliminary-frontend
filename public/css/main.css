@@ -73,7 +73,7 @@ body {
 }
 
 #water-history, #data-updated-time {
-    margin-top: 10px;;
+    margin-top: 10px;
     font-size: 2.6em;
 }
 
@@ -85,6 +85,10 @@ body {
 #water-temperature-header {
     font-size: 3.2em;
 }
+
+#timezone {
+    font-size: 2.6em;
+    margin-bottom: 12px;
 }
 
 .tide-time,

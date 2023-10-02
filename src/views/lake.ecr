@@ -28,9 +28,10 @@
         <span id="water-temperature-header">Wasser (&#176;C)</span><br>
         <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>.svg"
            id="water-history" title="history">Historie</a>
-        <p id="data-updated-time">
+        <span id="data-updated-time">
             <%= current_lake.formatted_time() %>
-        </p>
+        </span><br>
+        <span id="timezone" title="timezone">Ortszeit <%= current_lake.town() %></span><br>
         <p id="lake-water-temperature">
             <%= current_lake.data.preciseTemperature %>&#176;
         </p>

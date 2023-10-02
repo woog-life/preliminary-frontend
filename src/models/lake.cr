@@ -76,6 +76,10 @@ struct Lake
     t.to_s "%H:%M %d.%m.%Y"
   end
 
+  def town()
+    @name.split("(")[1].strip(")")
+  end
+
   def html_name()
     name = HTML.escape @name
     HTML_REPLACEMENTS.each do |key, value|
