@@ -12,11 +12,15 @@ body {
     width: 100%;
     font-family: Chawp, serif;
     font-weight: bold;
+    color: #d5d5d5;
+}
+
+a {
     color: #fff;
 }
 
 a:visited, a:hover {
-    color: #fff;
+    color: #c0c0c0;
 }
 
 body {
