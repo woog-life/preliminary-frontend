@@ -58,7 +58,7 @@ def get_lake(lake : ApiLake, precision = 1, formatRegion = nil) : Lake
 
   if response.status_code == 200
     data = LakeData.from_json(response.body)
-    Lake.new(lake.id, lake.name, data)
+    Lake.new(lake.id, lake.name, data, lake.timeZoneId)
   else
     raise ApiException.new("failed to get lake data")
   end

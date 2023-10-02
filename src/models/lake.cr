@@ -34,6 +34,7 @@ struct ApiLake
 
   property id : String
   property name : String
+  property timeZoneId : String
 end
 
 struct Tide
@@ -43,9 +44,9 @@ struct Tide
   property height : String
   property isHighTide : Bool
 
-  def formatted_time()
+  def formatted_time(timeZoneId : String)
     t = Time::Format::ISO_8601_DATE_TIME.parse(@time)
-    t = t.in Time::Location.load("Europe/Berlin")
+    t = t.in Time::Location.load(timeZoneId)
 
     t.to_s "%H:%M %d.%m"
   end
@@ -63,13 +64,14 @@ struct Lake
   property id : String
   property name : String
   property data : LakeData
+  property timeZoneId : String
 
-  def initialize(@id : String, @name : String, @data : LakeData)
+  def initialize(@id : String, @name : String, @data : LakeData, @timeZoneId : String)
   end
 
   def formatted_time()
     t = Time::Format::ISO_8601_DATE_TIME.parse(@data.time)
-    t = t.in Time::Location.load("Europe/Berlin")
+    t = t.in Time::Location.load(@timeZoneId)
 
     t.to_s "%H:%M %d.%m.%Y"
   end
@@ -90,8 +92,9 @@ struct LakeItem
   property id : String
   property name : String
   property features : Array(String)
+  property timeZoneId : String
 
-  def initialize(@id : String, @name : String, @features : Array(String))
+  def initialize(@id : String, @name : String, @features : Array(String), @timeZoneId : String)
   end
 
   def html_name()

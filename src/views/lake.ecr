@@ -39,7 +39,7 @@
             <%- tides.each do |tide| -%>
                 <tr>
                     <td class="tide-info"><% if tide.isHighTide %>Hochwasser<% else %>Niedrigwasser<% end %></td>
-                    <td class="tide-time"><%= tide.formatted_time() %></td>
+                    <td class="tide-time"><%= tide.formatted_time(current_lake.timeZoneId) %></td>
                     <td class="tide-height">(<%= tide.height %>m)</td>
                 </tr>
             <%- end -%>
