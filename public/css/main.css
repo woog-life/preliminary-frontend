@@ -50,7 +50,7 @@ body {
 }
 
 #lake-water-temperature {
-    font-size: 12em;
+    font-size: 18em;
     margin-top: 10px;
     margin-bottom: 0;
 }
@@ -63,8 +63,7 @@ body {
     border-radius: 255px 25px 225px 25px/25px 225px 25px 255px;
     background-color: #555;
     border-color: #555;
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 2rem;
     padding: 0.75rem .75rem .375rem;
     text-align: center;
     font-family: Chawp, serif;
@@ -74,19 +73,24 @@ body {
 }
 
 #water-history, #data-updated-time {
-    margin-top: 10px;
-    font-size: 1.3em;
+    margin-top: 10px;;
+    font-size: 2.6em;
+}
+
+#data-updated-time {
+    margin-bottom: 10px
 }
 
 #data-updated-time,
 #water-temperature-header {
-    font-size: 2em;
+    font-size: 3.2em;
+}
 }
 
 .tide-time,
 .tide-height,
 .tide-info {
-    font-size: 2em;
+    font-size: 2.6em;
 }
 
 .tide-info {
