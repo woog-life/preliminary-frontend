@@ -1,0 +1,7 @@
+en:
+  constant:
+    water_history: "History"
+    local_time_indicator: "local time"
+    water: "Water"
+    hightide: "high tide"
+    lowtide: "low tide"

@@ -1,5 +1,50 @@
+alias PrimarySubtag = String
+alias Subtag = String
+struct LanguageTag
+  property primary_subtag : PrimarySubtag
+  property subtag : Subtag?
+
+  def initialize(@primary_subtag : PrimarySubtag, @subtag : Subtag?)
+  end
+end
+struct LanguageRange
+  tag : LanguageTag?
+  property accept_all : Bool
+
+  def initialize(tag : LanguageTag?)
+    if tag.nil?
+      @tag = nil
+      @accept_all = true
+    else
+      @tag = tag
+      @accept_all = false
+    end
+  end
+
+  def tag() : LanguageTag
+    if @accept_all
+      raise Exception.new("language range is of type `accept_all` (`*`)")
+    end
+
+    @tag.as(LanguageTag)
+  end
+end
+
+alias QValue = Float64
+struct ObsLanguageQ
+  property language_range : LanguageRange
+  property qvalue : QValue
+
+  def initialize(@language_range : LanguageRange, @qvalue : QValue)
+  end
+
+  def has_subtag()
+    !@language_range.tag?.subtag.nil?
+  end
+end
+
 # see https://github.com/woog-life/api/issues/50
-def get_country_code_from_header(accept_language_value : String?) : String?
+def parse_accept_language_header(accept_language_value : String?) : Array(ObsLanguageQ)?
   if accept_language_value == nil
     return nil
   end
@@ -52,50 +97,109 @@ def get_country_code_from_header(accept_language_value : String?) : String?
   # we're going to split the string instead (on `, ?`) since this makes using capture groups a lot easier
   languages = language.split(/, ?/)
 
-  highest_q_value = 0.0
-  subtag = nil
-
-  # sort by highest qvalue
+  result = [] of ObsLanguageQ
   languages.each do |language|
     if value = language.match(obs_language_q)
+      value = value.as(Regex::MatchData)
+      begin
+        quality = value["quality"].to_f
+      rescue KeyError | ArgumentError
+        # "The default value is q=1."
+        # see https://www.rfc-editor.org/rfc/rfc2616#section-14.1
+        # "If no Q values are given, the language-ranges are given in priority order,
+        #  with the leftmost language-range being the most preferred language"
+        # see https://www.rfc-editor.org/rfc/rfc3282#section-3
+        quality = 1.0
+      end
+
+
       # "If a parameter has a quality value of 0, then content with this parameter is `not acceptable' for the client."
       # see https://www.rfc-editor.org/rfc/rfc2616#section-3.9
-      begin
-        quality = value["quality"].to_f?
-      rescue KeyError
+      if quality == 0.0
+        return
       end
 
-      # "The default value is q=1."
-      # see https://www.rfc-editor.org/rfc/rfc2616#section-14.1
-      # "If no Q values are given, the language-ranges are given in priority order,
-      #  with the leftmost language-range being the most preferred language"
-      # see https://www.rfc-editor.org/rfc/rfc3282#section-3
-      # thus we can immediately return after seeing a language with no quality or q=1
-      if quality.nil? || quality == 1.0
+      if value["language_range"] == "*"
+        language_range = true
+        language_tag = nil
+      else
+        primary_subtag = value["primary"]
+        subtag = nil
         begin
           subtag = value["subtag"]
-          break
         rescue KeyError
-          # process rest of the list
-          next
         end
+        language_tag = LanguageTag.new(primary_subtag, subtag)
       end
+      language_range = LanguageRange.new(language_tag)
 
-      if quality != 0.0
-        if highest_q_value == nil || highest_q_value < quality
-          begin
-            subtag = value["subtag"]
-            highest_q_value = quality
-          rescue KeyError
-            # process rest of the list
-            next
-          end
-        end
+      result.push ObsLanguageQ.new(language_range, quality)
+    end
+  end
+
+  result
+end
+
+def get_country_code_from_header(languages : Array(ObsLanguageQ)?, default : String) : String
+  if languages.nil?
+    return default
+  end
+
+  highest_q_value = 0.0
+  language = nil
+
+  languages.each do |lang|
+    if highest_q_value == nil || highest_q_value < lang.qvalue
+      begin
+        language = lang
+        highest_q_value = lang.qvalue
+      rescue KeyError
+        # process rest of the list
+        next
       end
     end
   end
 
-  subtag
+  if language.nil?
+    default
+  else
+    if language.language_range.accept_all
+      default
+    else
+      language.language_range.tag().subtag.as(String)
+    end
+  end
+end
+
+def get_language_from_header(languages : Array(ObsLanguageQ)?, default : String) : String
+  if languages.nil?
+    return default
+  end
+
+  highest_q_value = 0.0
+  language = nil
+
+  languages.each do |lang|
+    if highest_q_value == nil || highest_q_value < lang.qvalue
+      begin
+        language = lang
+        highest_q_value = lang.qvalue
+      rescue KeyError
+        # process rest of the list
+        next
+      end
+    end
+  end
+
+  if language.nil?
+    default
+  else
+    if language.language_range.accept_all
+      default
+    else
+      language.language_range.tag().primary_subtag
+    end
+  end
 end
 
 def generate_cookie(name : String, value : String) : HTTP::Cookie

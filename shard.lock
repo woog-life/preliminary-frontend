@@ -8,6 +8,10 @@ shards:
     git: https://github.com/crystal-loot/exception_page.git
     version: 0.3.0
 
+  i18n:
+    git: https://github.com/crystal-i18n/i18n.git
+    version: 0.2.1
+
   kemal:
     git: https://github.com/kemalcr/kemal.git
     version: 1.3.0

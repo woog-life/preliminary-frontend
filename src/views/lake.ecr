@@ -12,18 +12,18 @@
         <!--suppress HtmlFormInputWithoutLabel -->
         <select id="lake-dropdown">
             <%- lakes.each do |lake| -%>
-            <option value="<%= lake.path_name() %>" <%- if lake.id == current_lake.id -%>selected=""<%- end -%>><%= lake.html_name() %></option>
+            <option value="<%= lake.path_name() %>"<%- if lake.id == current_lake.id -%>selected=""<%- end -%>><%= lake.html_name() %></option>
             <%- end -%>
         </select>
     </form>
     <div class="grid-item" style="">
-        <span id="water-temperature-header">Wasser (&#176;C)</span><br>
+        <span id="water-temperature-header"><%= I18n.t("constant.water") %> (&#176;C)</span><br>
         <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>.svg"
-           id="water-history" title="history">Historie</a>
+           id="water-history" title="history"><%= I18n.t("constant.water_history") %></a>
         <span id="data-updated-time">
             <%= current_lake.formatted_time() %>
         </span><br>
-        <span id="timezone" title="timezone">Ortszeit <%= current_lake.town() %></span><br>
+        <span id="timezone" title="timezone"><%= I18n.t("constant.local_time_indicator") %> <%= current_lake.town() %></span><br>
         <p id="lake-water-temperature">
             <%= current_lake.data.preciseTemperature %>&#176;
         </p>
@@ -31,7 +31,7 @@
             <table>
             <%- tides.each do |tide| -%>
                 <tr>
-                    <td class="tide-info"><% if tide.isHighTide %>Hochwasser<% else %>Niedrigwasser<% end %></td>
+                    <td class="tide-info"><% if tide.isHighTide %><%= I18n.t("constant.hightide") %><% else %><%= I18n.t("constant.lowtide") %><% end %></td>
                     <td class="tide-time"><%= tide.formatted_time(current_lake.timeZoneId) %></td>
                     <td class="tide-height">(<%= tide.height %>m)</td>
                 </tr>

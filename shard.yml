@@ -15,3 +15,5 @@ license: MIT
 dependencies:
   kemal:
     github: kemalcr/kemal
+  i18n:
+    github: crystal-i18n/i18n

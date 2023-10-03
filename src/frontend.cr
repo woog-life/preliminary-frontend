@@ -2,6 +2,13 @@ require "kemal"
 require "./models/lake.cr"
 require "./api/lake.cr"
 require "./helper.cr"
+require "i18n"
+
+I18n.config.loaders << I18n::Loader::YAML.new("config/locales")
+I18n.config.available_locales = [:de, :en]
+I18n.config.default_locale = :de
+I18n.config.fallbacks = [:de]
+I18n.init
 
 def uuid_has_feature(lakes : Array(LakeItem), uuid : String, feature : String)
   lake : LakeItem | Nil = lakes.find { |lake| lake.id == uuid }
@@ -40,7 +47,9 @@ module Frontend
     end
 
     precision = 2
-    formatRegion : String? = get_country_code_from_header(env.request.headers["Accept-Language"]?)
+    acceptable_languages = parse_accept_language_header(env.request.headers["Accept-Language"]?)
+    formatRegion : String = get_country_code_from_header(acceptable_languages, I18n.config.default_locale)
+    locale : String = get_language_from_header(acceptable_languages, I18n.config.default_locale)
 
     tides = [] of Tide
 
@@ -67,6 +76,7 @@ module Frontend
           tides = tidesChannel.receive
         end
 
+        I18n.locale = locale
         render "src/views/lake.ecr"
       }
     rescue ex : ApiException
