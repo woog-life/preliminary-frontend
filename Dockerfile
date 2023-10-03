@@ -12,6 +12,7 @@ RUN shards install --no-color --production
 
 COPY public/ public/
 COPY src/ src/
+COPY config/ config/
 
 RUN shards build --static --no-debug --release --production --warnings=all
 
@@ -25,6 +26,7 @@ WORKDIR /usr/app
 
 COPY --from=builder /usr/app/bin/frontend ./frontend
 COPY --from=builder /usr/app/public ./public
+COPY --from=builder /usr/app/config ./config
 
 RUN adduser \
     # don't assign a password \
