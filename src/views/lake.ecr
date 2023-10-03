@@ -12,7 +12,7 @@
         <!--suppress HtmlFormInputWithoutLabel -->
         <select id="lake-dropdown">
             <%- lakes.each do |lake| -%>
-            <option value="<%= lake.path_name() %>"><%- if lake.id == current_lake.id -%>selected=""<%- end -%>><%= lake.html_name() %></option>
+            <option value="<%= lake.path_name() %>" <%- if lake.id == current_lake.id -%>selected=""<%- end -%>><%= lake.html_name() %></option>
             <%- end -%>
         </select>
     </form>
