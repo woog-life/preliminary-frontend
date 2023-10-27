@@ -165,7 +165,7 @@ def get_country_code_from_header(languages : Array(ObsLanguageQ)?, default : Str
   else
     if language.language_range.accept_all
       default
-    elsif language.has_subtag?
+    elsif language.has_subtag()
       language.language_range.tag().subtag.as(String)
     else
       default
