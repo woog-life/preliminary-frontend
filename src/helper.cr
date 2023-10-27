@@ -39,7 +39,7 @@ struct ObsLanguageQ
   end
 
   def has_subtag()
-    !@language_range.tag?.subtag.nil?
+    !@language_range.tag()?.subtag.nil?
   end
 end
 
