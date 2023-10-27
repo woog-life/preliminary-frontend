@@ -60,6 +60,6 @@ def get_lake(lake : ApiLake, precision = 1, formatRegion = nil) : Lake
     data = LakeData.from_json(response.body)
     Lake.new(lake.id, lake.name, data, lake.timeZoneId)
   else
-    raise ApiException.new("failed to get lake data")
+    raise ApiException.new("failed to get lake data (#{formatRegion}) #{response.status_code}: #{response.body}")
   end
 end

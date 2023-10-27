@@ -48,7 +48,7 @@ module Frontend
 
     precision = 2
     acceptable_languages = parse_accept_language_header(env.request.headers["Accept-Language"]?)
-    formatRegion : String = get_country_code_from_header(acceptable_languages, I18n.config.default_locale)
+    formatRegion : String = get_country_code_from_header(acceptable_languages, "DE")
     locale : String = get_language_from_header(acceptable_languages, I18n.config.default_locale)
 
     tides = [] of Tide
