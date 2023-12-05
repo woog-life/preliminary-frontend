@@ -1,6 +1,7 @@
 en:
   constant:
     water_history: "History"
+    water_history_line: "last month"
     local_time_indicator: "local time"
     water: "Water"
     hightide: "high tide"
