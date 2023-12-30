@@ -95,10 +95,10 @@ struct LakeItem
 
   property id : String
   property name : String
-  property features : Array(String)
+  property supportedFeatures : Array(String)
   property timeZoneId : String
 
-  def initialize(@id : String, @name : String, @features : Array(String), @timeZoneId : String)
+  def initialize(@id : String, @name : String, @supportedFeatures : Array(String), @timeZoneId : String)
   end
 
   def html_name()
@@ -111,7 +111,7 @@ struct LakeItem
   end
 
   def has_feature(feature : String)
-    found = @features.index feature
+    found = @supportedFeatures.index feature
     !found.nil?
   end
 
