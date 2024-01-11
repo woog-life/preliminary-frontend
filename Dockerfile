@@ -1,4 +1,4 @@
-FROM crystallang/crystal:1.10.1-alpine AS builder
+FROM crystallang/crystal:1.11.1-alpine AS builder
 
 RUN apk update && \
     apk add ca-certificates && \
