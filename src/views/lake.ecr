@@ -18,10 +18,15 @@
     </form>
     <div class="grid-item" style="">
         <span id="water-temperature-header"><%= I18n.t("constant.water") %> (&#176;C)</span><br>
-        <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>.svg"
-           id="water-history" title="history"><%= I18n.t("constant.water_history") %></a>
-           <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>_line.svg"
-           id="water-history" title="history">(<%= I18n.t("constant.water_history_line") %>)</a>
+        
+        <span>
+            <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>.svg"
+                id="water-history" title="history"><%= I18n.t("constant.water_history") %></a>
+        </span>
+        <span>
+            <a href="https://sos-de-fra-1.exo.io/wooglife/<%= current_lake.id %>_line.svg"
+                id="water-history" title="history">(<%= I18n.t("constant.water_history_line") %>)</a>
+        </span>
         <span id="data-updated-time">
             <%= current_lake.formatted_time() %>
         </span><br>
